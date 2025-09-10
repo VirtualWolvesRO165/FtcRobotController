@@ -15,6 +15,7 @@ public class TeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.update();
+            telemetry.update();
         }
     }
 }
