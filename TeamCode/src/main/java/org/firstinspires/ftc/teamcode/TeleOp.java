@@ -6,15 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 public class TeleOp extends LinearOpMode {
+    RobotHardware robot = new RobotHardware(hardwareMap);
     @Override
     public void runOpMode() {
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.update();
+            robot.Drive();
             telemetry.update();
         }
     }
