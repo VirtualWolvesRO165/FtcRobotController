@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Autonomous(name="Limelight AprilTag Cases", group="Autonomous")
-public class LimelightAprilTagCases extends LinearOpMode {
+public class Limelight extends LinearOpMode {
 
     int caseNumber = 0; // 0 = unknown, 1 = \\GPP, 2 = PGP, 3 = PPG
 
