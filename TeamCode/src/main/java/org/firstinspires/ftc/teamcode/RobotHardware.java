@@ -1,15 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.google.ar.core.Config;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class RobotHardware {
 
     public DcMotorEx leftFront , rightFront , leftBack , rightBack;
+
+    public Limelight3A limelight3A;
+    public MyLimelight myLimelight;
 
     DriveTrain driveTrain = new DriveTrain();
     IMU imu;
@@ -40,10 +52,20 @@ public class RobotHardware {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         driveTrain.Init(leftFront , leftBack , rightFront , rightBack);
         /// DRIVETRAIN
+
+        /// Limelight
+        limelight3A  = hardwareMap.get(Limelight3A.class , "Limelight");
+        limelight3A.pipelineSwitch(0);
     }
 
-    public void Drive(){
-        driveTrain.Drive();
+    public void Init(){
+        driveTrain.Init(leftFront , rightFront , leftBack , rightBack);
+    }
+
+    public void AutoInit(){
+        driveTrain.Init(leftFront , rightFront , leftBack , rightBack);
+        myLimelight.Init(limelight3A);
+
     }
 
 }

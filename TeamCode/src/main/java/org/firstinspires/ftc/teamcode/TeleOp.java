@@ -11,10 +11,11 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        robot.Init();
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.Drive();
+            robot.driveTrain.Drive();
             telemetry.update();
         }
     }
