@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.HardwareMap.DeviceMapping;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystem.subsystemW;
 
 import java.util.List;
 
-public class robotHardware extends subsystemW {
+public class robotHardware extends SubsystemBase {
 
     private final Telemetry telemetry;
     private final List<LynxModule> hubs;
@@ -34,25 +33,5 @@ public class robotHardware extends subsystemW {
         voltage = voltageSensor.iterator().next().getVoltage();
     }
 
-    @Override
-    public void read(){
-        if(voltageTimer.seconds()>5){
-            voltage = voltageSensor.iterator().next().getVoltage();
-            voltageTimer.reset();
-        }
-        loopTime = System.nanoTime();
-    }
-    @Override
-    public void loop(){
-        loopTime = 1e9 / (loopTime-prevLoopTime);
-        telemetry.addData("FPS: ",  loopTime);
-        prevLoopTime = loopTime;
-    }
-    @Override
-    public void write(){
-        for(LynxModule hub : hubs){
-            hub.clearBulkCache();
-        }
-    }
 
 }
