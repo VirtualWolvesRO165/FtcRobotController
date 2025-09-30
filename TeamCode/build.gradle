@@ -27,7 +27,6 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'com.google.ar:core:1.50.0'
     implementation 'org.solverslib:core:0.3.2'
-    implementation 'org.solverslib:pedroPathing:0.3.2'
 }
 
 repositories {

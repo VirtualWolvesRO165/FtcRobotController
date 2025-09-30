@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.subsystem.Drive;
+import org.firstinspires.ftc.teamcode.robot.Global;
 
 public class Robot{
 
@@ -11,8 +13,8 @@ public class Robot{
     public DcMotorEx leftBack;
     public  DcMotorEx rightFront;
     public DcMotorEx rightBack;
-
     public Drive drive;
+
     private static Robot instance = new Robot();
     public boolean enabled;
     public static Robot getInstance(){
