@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpMods.TELEOP;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.RunCommand;
+import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
@@ -24,11 +27,11 @@ public class TeleOp extends CommandOpMode {
         operator = new GamepadEx(gamepad2);
         robot.init(hardwareMap);
         register(robot.drive);
-
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenHeld(
-            new InstantCommand(()->robot.drive.PowerMotor(driver.getLeftX() , driver.getLeftY() , driver.getRightX()))
+        robot.drive.setDefaultCommand(
+                new RunCommand(()->{
+                    robot.drive.PowerMotor(driver.getLeftY() , driver.getLeftX() , driver.getRightX());
+                })
         );
-
         super.run();
     }
 
