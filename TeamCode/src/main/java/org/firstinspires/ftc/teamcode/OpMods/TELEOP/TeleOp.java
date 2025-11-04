@@ -24,10 +24,10 @@ public class TeleOp extends CommandOpMode {
         operator = new GamepadEx(gamepad2);
         robot.init(hardwareMap);
         register(robot.drive);
-
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenHeld(
-            new InstantCommand(()->robot.drive.PowerMotor(driver.getLeftX() , driver.getLeftY() , driver.getRightX()))
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                new InstantCommand(() -> robot.turret.ShooterPower())
         );
+
 
         super.run();
     }
@@ -36,6 +36,8 @@ public class TeleOp extends CommandOpMode {
     public void run(){
         if(timer==null)
             timer = new ElapsedTime();
+
+        robot.drive.PowerMotor(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
 
         super.run();
         telemetry.update();
