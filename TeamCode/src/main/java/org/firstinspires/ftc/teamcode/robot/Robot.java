@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.subsystem.Drive;
 import org.firstinspires.ftc.teamcode.robot.Global;
+import org.firstinspires.ftc.teamcode.subsystem.Sorter;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 public class Robot{
@@ -20,7 +21,7 @@ public class Robot{
     public DcMotorEx IntakeTransfer; //power
     public DcMotorEx ShooterUp; //power
     public DcMotorEx ShooterDown; //power
-    public DcMotorEx Indexer; //PID
+    public DcMotorEx SorterMotor; //PID
 
     public Servo ShooterAngle; //range
     public Servo ShooterRotation; //range
@@ -28,6 +29,7 @@ public class Robot{
 
     public Drive drive;
     public Turret turret;
+    public Sorter sorter;
 
     private static Robot instance = new Robot();
     public boolean enabled;
@@ -61,8 +63,14 @@ public class Robot{
         ShooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         ShooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        SorterMotor = hardwareMap.get(DcMotorEx.class , "Sorter");
+        SorterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        SorterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        SorterMotor.setDirection(DcMotorEx.Direction.FORWARD);
+
         drive = new Drive();
         turret = new Turret();
+        sorter = new Sorter();
     }
 
 
