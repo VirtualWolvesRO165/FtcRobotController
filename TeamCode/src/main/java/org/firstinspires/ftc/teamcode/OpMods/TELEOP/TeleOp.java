@@ -46,6 +46,16 @@ public class TeleOp extends CommandOpMode {
                 new InstantCommand(()->{
                     robot.sorter.RoomTrigger();
                 }));
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                new InstantCommand(()->{
+                    robot.transfer.StartTransfer();
+                }));
+        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+                new InstantCommand(()->{
+                    robot.intake.PowerIntake();
+                })
+        );
+
 
         super.run();
     }
@@ -56,6 +66,7 @@ public class TeleOp extends CommandOpMode {
             timer = new ElapsedTime();
 
         robot.drive.PowerMotor(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
+        robot.turret.RotateShooter(operator.getLeftX());
         robot.sorter.loop();
         super.run();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

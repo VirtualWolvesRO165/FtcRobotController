@@ -13,10 +13,10 @@ public class Drive extends SubsystemBase
 
     }
     public void PowerMotor(double p_drive , double strafe , double turn){
-        robot.leftFront.setPower(p_drive+strafe+turn);
-        robot.leftBack.setPower(p_drive-strafe+turn);
-        robot.rightFront.setPower(p_drive-strafe-turn);
-        robot.rightBack.setPower(p_drive+strafe-turn);
+        robot.leftFront.setPower((p_drive+strafe+turn)/3);
+        robot.leftBack.setPower((p_drive-strafe+turn)/3);
+        robot.rightFront.setPower((p_drive-strafe-turn)/3);
+        robot.rightBack.setPower((p_drive+strafe-turn)/3);
     }
 
 

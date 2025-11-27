@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,7 +11,9 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.subsystem.Drive;
 import org.firstinspires.ftc.teamcode.robot.Global;
 import org.firstinspires.ftc.teamcode.subsystem.Sorter;
+import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
 
 public class Robot{
 
@@ -18,18 +21,22 @@ public class Robot{
     public DcMotorEx leftBack;
     public  DcMotorEx rightFront;
     public DcMotorEx rightBack;
-    public DcMotorEx IntakeTransfer; //power
-    public DcMotorEx ShooterUp; //power
-    public DcMotorEx ShooterDown; //power
-    public DcMotorEx SorterMotor; //PID
+    public DcMotorEx intakeMotor; //power
+    public DcMotorEx shooterUp
+; //power
+    public DcMotorEx shooterDown
+; //power
+    public DcMotorEx sorterMotor; //PID
 
-    public Servo ShooterAngle; //range
-    public Servo ShooterRotation; //range
-    public Servo Transfer; //0-1
+    public Servo shooterAngle; //range
+    public CRServo shooterRotation; //range
+    public Servo transferServo; //0-1
 
     public Drive drive;
     public Turret turret;
     public Sorter sorter;
+    public Transfer transfer;
+    public Intake intake;
 
     private static Robot instance = new Robot();
     public boolean enabled;
@@ -41,6 +48,7 @@ public class Robot{
     }
 
     public void init(HardwareMap hardwareMap){
+        ///Motors
         leftFront = hardwareMap.get(DcMotorEx.class , "leftFront");
         leftBack = hardwareMap.get(DcMotorEx.class , "leftBack");
         rightFront = hardwareMap.get(DcMotorEx.class , "rightFront");
@@ -54,23 +62,36 @@ public class Robot{
         leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        ShooterUp = hardwareMap.get(DcMotorEx.class , "ShooterUp");
-        ShooterDown = hardwareMap.get(DcMotorEx.class , "ShooterDown");
+        shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
+        shooterDown = hardwareMap.get(DcMotorEx.class , "shooterDown ");
 
-        ShooterUp.setDirection(DcMotorEx.Direction.REVERSE);
-        ShooterDown.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterUp.setDirection(DcMotorEx.Direction.REVERSE);
+        shooterDown.setDirection(DcMotorEx.Direction.FORWARD);
 
-        ShooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        ShooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        SorterMotor = hardwareMap.get(DcMotorEx.class , "Sorter");
-        SorterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        SorterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        SorterMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        sorterMotor = hardwareMap.get(DcMotorEx.class , "sorter");
+        sorterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        sorterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        sorterMotor.setDirection(DcMotorEx.Direction.FORWARD);
+
+        intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
+        intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
+
+
+        ///Servos
+        transferServo = hardwareMap.get(Servo.class , "transfer");
+        transferServo.setPosition(0.9);
+
+        shooterRotation = hardwareMap.get(CRServo.class , "shooterRotation");
+        shooterRotation.setDirection(DcMotorSimple.Direction.FORWARD);
 
         drive = new Drive();
         turret = new Turret();
         sorter = new Sorter();
+        transfer = new Transfer();
+        intake = new Intake();
     }
 
 

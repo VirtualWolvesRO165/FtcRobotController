@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.controller.PIDController;
@@ -18,6 +19,7 @@ public class Sorter extends SubsystemBase {
     public static double kp=0,ki=0,kd=0,kf=0;
     public static int sorterTarget=0;
     public static int sorterPos = 0;
+    public static double power;
     private boolean intakePos=true;
     private final double ticks_in_degrees = 700/180.0;
 
@@ -25,12 +27,9 @@ public class Sorter extends SubsystemBase {
     }
 
     public void loop(){
-        controller = new PIDController(kp , ki , kd);
-        controller.setPID(kp , ki , kd);
-        sorterPos = robot.SorterMotor.getCurrentPosition();
-        double pid = controller.calculate(sorterPos , sorterTarget);
-        double power = pid;
-        robot.SorterMotor.setPower(power);
+        robot.sorterMotor.setTargetPosition(sorterTarget);
+        robot.sorterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.sorterMotor.setPower(power);
     }
 
     public void SetTarget(int target){

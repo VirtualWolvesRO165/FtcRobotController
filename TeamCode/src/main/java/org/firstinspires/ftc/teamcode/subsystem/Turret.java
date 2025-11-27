@@ -17,14 +17,18 @@ public class Turret extends SubsystemBase {
     public void ShooterPower(){
         if(!isPowered)
         {
-            robot.ShooterUp.setPower(1);
-            robot.ShooterDown.setPower(1);
+            robot.shooterUp.setPower(1);
+            robot.shooterDown.setPower(1);
             isPowered=true;
         }
         else{
-            robot.ShooterUp.setPower(0);
-            robot.ShooterDown.setPower(0);
+            robot.shooterUp.setPower(0);
+            robot.shooterDown.setPower(0);
             isPowered=false;
         }
+    }
+
+    public void RotateShooter(double modifier){
+        robot.shooterRotation.setPower(modifier);
     }
 }
