@@ -16,30 +16,46 @@ import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 public class Transfer extends SubsystemBase {
 
     private final Robot robot = Robot.getInstance();
-    ElapsedTime timer = new ElapsedTime();
+    public static ElapsedTime timer = new ElapsedTime();
     public static double posup=0;
     public static double posdown=0.9;
     private boolean up=false , button=false;
 
     public void StartTransfer()
     {
-        up=!up;
-        if(!up){
-            if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1) {
-                robot.transferServo.setPosition(posup);
-                if(artefactsOrder[currentRoom-1]==1)
-                    artefacts[1]--;
-                else
-                    artefacts[0]--;
-                artefactsOrder[currentRoom-1]=-1;
+        button=true;
+        timer= new ElapsedTime();
+        timer.reset();
+        if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1) {
+            while(button)
+                if(timer.seconds()==1)
+                {
+                    if(artefacts[0]+artefacts[1]>0){
+                        robot.transferServo.setPosition(posup);
+                        if(artefactsOrder[currentRoom-1]==1)
+                            artefacts[1]--;
+                        else
+                            artefacts[0]--;
+                        artefactsOrder[currentRoom-1]=-1;
+                    }
+                    if(timer.seconds()>2.5)
+                    {
+                        robot.transferServo.setPosition(posdown);
+                        robot.sorter.ChangeRoom(1);
+                        timer.reset();
+                    }
+                    if(artefacts[0]+artefacts[1]==0)
+                        button=false;
+
+                }
 
             }
-        }
-        else{
-            robot.transferServo.setPosition(posdown);
-        }
 
     }
+
+
+    public void LowerTransfer(){robot.transferServo.setPosition(posdown);}
+    public void RiseTransfer(){robot.transferServo.setPosition(posup);}
 
 
 }

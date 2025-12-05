@@ -109,8 +109,6 @@ public class Robot{
         ///Globals
 
         currentRoom=1;
-        roomIntake = new int[]{0 ,185 ,370};
-        roomOuttake = new int[]{275, 455, 640};
         artefactsOrder= new int[]{-1 ,-1 ,-1};
         artefacts= new int[]{0,0};
 

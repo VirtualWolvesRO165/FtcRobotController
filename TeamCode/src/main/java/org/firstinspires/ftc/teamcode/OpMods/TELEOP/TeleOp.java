@@ -83,6 +83,7 @@ public class TeleOp extends CommandOpMode {
         telemetry.addData("Blue", "%.3f", colors.blue);
         telemetry.addData("Hue", "%.3f", hsvValues[0]);
         telemetry.addData("artefacts " , artefactsOrder[0]+" "+artefactsOrder[1]+" "+artefactsOrder[2]);
+        telemetry.addData("bile" , robot.transfer.timer.seconds());
         telemetry.update();
         timer.reset();
     }
