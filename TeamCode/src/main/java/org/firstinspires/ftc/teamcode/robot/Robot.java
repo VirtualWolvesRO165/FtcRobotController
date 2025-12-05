@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
@@ -14,6 +15,12 @@ import org.firstinspires.ftc.teamcode.subsystem.Sorter;
 import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.robot.Global;
+import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
+import static org.firstinspires.ftc.teamcode.robot.Global.roomIntake;
+import static org.firstinspires.ftc.teamcode.robot.Global.roomOuttake;
+import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
+import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 
 public class Robot{
 
@@ -31,6 +38,9 @@ public class Robot{
     public Servo shooterAngle; //range
     public CRServo shooterRotation; //range
     public Servo transferServo; //0-1
+
+    ///Sensors
+    public NormalizedColorSensor colorSensor;
 
     public Drive drive;
     public Turret turret;
@@ -62,6 +72,11 @@ public class Robot{
         leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
         shooterDown = hardwareMap.get(DcMotorEx.class , "shooterDown ");
 
@@ -75,6 +90,7 @@ public class Robot{
         sorterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         sorterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         sorterMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        sorterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
         intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -86,6 +102,17 @@ public class Robot{
 
         shooterRotation = hardwareMap.get(CRServo.class , "shooterRotation");
         shooterRotation.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        ///Sensors
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
+
+        ///Globals
+
+        currentRoom=1;
+        roomIntake = new int[]{0 ,185 ,370};
+        roomOuttake = new int[]{275, 455, 640};
+        artefactsOrder= new int[]{-1 ,-1 ,-1};
+        artefacts= new int[]{0,0};
 
         drive = new Drive();
         turret = new Turret();

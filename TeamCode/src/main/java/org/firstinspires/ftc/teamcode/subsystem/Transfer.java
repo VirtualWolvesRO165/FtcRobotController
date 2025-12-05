@@ -5,6 +5,12 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import org.firstinspires.ftc.teamcode.robot.Global;
+import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
+import static org.firstinspires.ftc.teamcode.robot.Global.roomIntake;
+import static org.firstinspires.ftc.teamcode.robot.Global.roomOuttake;
+import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
+import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 
 @Config
 public class Transfer extends SubsystemBase {
@@ -19,7 +25,15 @@ public class Transfer extends SubsystemBase {
     {
         up=!up;
         if(!up){
-            robot.transferServo.setPosition(posup);
+            if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1) {
+                robot.transferServo.setPosition(posup);
+                if(artefactsOrder[currentRoom-1]==1)
+                    artefacts[1]--;
+                else
+                    artefacts[0]--;
+                artefactsOrder[currentRoom-1]=-1;
+
+            }
         }
         else{
             robot.transferServo.setPosition(posdown);
