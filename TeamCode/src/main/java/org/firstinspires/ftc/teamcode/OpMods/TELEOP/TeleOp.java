@@ -5,9 +5,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.RepeatCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
 import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
 import static org.firstinspires.ftc.teamcode.subsystem.Sorter.colors;
@@ -51,10 +56,23 @@ public class TeleOp extends CommandOpMode {
                 new InstantCommand(()->{
                     robot.sorter.RoomTrigger();
                 }));
+        RepeatCommand launchSequence = new RepeatCommand(
+                new SequentialCommandGroup(
+                        new WaitCommand(1500),
+                        new InstantCommand(()->robot.transfer.LaunchStage1()),
+                        new WaitCommand(1000),
+                        new InstantCommand(()->robot.transfer.LaunchStage2())
+                ),
+                ()->robot.transfer.EndLaunchSequence()
+        );
         operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                new InstantCommand(()->{
-                    robot.transfer.StartTransfer();
-                }));
+                new SequentialCommandGroup(
+                        launchSequence,
+                        new WaitUntilCommand(launchSequence::isFinished),
+                        new InstantCommand(()->robot.transfer.LowerTransfer()),
+                        new WaitCommand(200),
+                        new InstantCommand(()->robot.sorter.RoomTrigger())
+                ));
         operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new InstantCommand(()->{
                     robot.intake.PowerIntake();

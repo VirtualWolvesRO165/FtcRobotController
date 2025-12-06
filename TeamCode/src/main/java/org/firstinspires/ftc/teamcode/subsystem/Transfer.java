@@ -50,9 +50,26 @@ public class Transfer extends SubsystemBase {
                 }
 
             }
-
     }
 
+    public void LaunchStage1(){
+        if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1){
+            RiseTransfer();
+            if(artefactsOrder[currentRoom-1]==1)
+                artefacts[1]--;
+            else
+                artefacts[0]--;
+            artefactsOrder[currentRoom-1]=-1;
+        }
+    }
+    public void LaunchStage2(){
+        LowerTransfer();
+        robot.sorter.ChangeRoom(1);
+    }
+
+    public boolean EndLaunchSequence(){
+        return (artefacts[0]+artefacts[1]==0);
+    }
 
     public void LowerTransfer(){robot.transferServo.setPosition(posdown);}
     public void RiseTransfer(){robot.transferServo.setPosition(posup);}
