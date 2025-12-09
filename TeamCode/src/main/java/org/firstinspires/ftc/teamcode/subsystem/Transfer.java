@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.teamcode.robot.Global;
 import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
+import static org.firstinspires.ftc.teamcode.robot.Global.outtaking;
 import static org.firstinspires.ftc.teamcode.robot.Global.roomIntake;
 import static org.firstinspires.ftc.teamcode.robot.Global.roomOuttake;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
@@ -21,44 +22,12 @@ public class Transfer extends SubsystemBase {
     public static double posdown=0.9;
     private boolean up=false , button=false;
 
-    public void StartTransfer()
-    {
-        button=true;
-        timer= new ElapsedTime();
-        timer.reset();
-        if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1) {
-            while(button)
-                if(timer.seconds()==1)
-                {
-                    if(artefacts[0]+artefacts[1]>0){
-                        robot.transferServo.setPosition(posup);
-                        if(artefactsOrder[currentRoom-1]==1)
-                            artefacts[1]--;
-                        else
-                            artefacts[0]--;
-                        artefactsOrder[currentRoom-1]=-1;
-                    }
-                    if(timer.seconds()>2.5)
-                    {
-                        robot.transferServo.setPosition(posdown);
-                        robot.sorter.ChangeRoom(1);
-                        timer.reset();
-                    }
-                    if(artefacts[0]+artefacts[1]==0)
-                        button=false;
-
-                }
-
-            }
-    }
-
     public void LaunchStage1(){
         if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1){
+            outtaking=true;
             RiseTransfer();
-            if(artefactsOrder[currentRoom-1]==1)
-                artefacts[1]--;
-            else
-                artefacts[0]--;
+            if(artefactsOrder[currentRoom-1]>-1)
+                artefacts--;
             artefactsOrder[currentRoom-1]=-1;
         }
     }
@@ -68,7 +37,11 @@ public class Transfer extends SubsystemBase {
     }
 
     public boolean EndLaunchSequence(){
-        return (artefacts[0]+artefacts[1]==0);
+        return (artefacts==0);
+    }
+
+    public void EndOuttake(){
+        outtaking=false;
     }
 
     public void LowerTransfer(){robot.transferServo.setPosition(posdown);}

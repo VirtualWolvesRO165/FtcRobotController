@@ -80,8 +80,8 @@ public class Robot{
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
         shooterDown = hardwareMap.get(DcMotorEx.class , "shooterDown ");
 
-        shooterUp.setDirection(DcMotorEx.Direction.REVERSE);
-        shooterDown.setDirection(DcMotorEx.Direction.FORWARD);
+        shooterUp.setDirection(DcMotorEx.Direction.FORWARD);
+        shooterDown.setDirection(DcMotorEx.Direction.REVERSE);
 
         shooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         shooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -110,7 +110,7 @@ public class Robot{
 
         currentRoom=1;
         artefactsOrder= new int[]{-1 ,-1 ,-1};
-        artefacts= new int[]{0,0};
+        artefacts= 0;
 
         drive = new Drive();
         turret = new Turret();

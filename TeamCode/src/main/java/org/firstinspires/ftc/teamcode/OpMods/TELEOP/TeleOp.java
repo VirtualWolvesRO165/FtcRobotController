@@ -15,6 +15,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
 import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
+import static org.firstinspires.ftc.teamcode.robot.Global.outtaking;
 import static org.firstinspires.ftc.teamcode.subsystem.Sorter.colors;
 import static org.firstinspires.ftc.teamcode.subsystem.Sorter.hsvValues;
 
@@ -71,7 +72,8 @@ public class TeleOp extends CommandOpMode {
                         new WaitUntilCommand(launchSequence::isFinished),
                         new InstantCommand(()->robot.transfer.LowerTransfer()),
                         new WaitCommand(200),
-                        new InstantCommand(()->robot.sorter.RoomTrigger())
+                        new InstantCommand(()->robot.sorter.RoomTrigger()),
+                        new InstantCommand(()->robot.transfer.EndOuttake())
                 ));
         operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new InstantCommand(()->{
@@ -91,7 +93,8 @@ public class TeleOp extends CommandOpMode {
         robot.drive.PowerMotor(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
         robot.turret.RotateShooter(operator.getLeftX());
         robot.sorter.loop();
-        robot.sorter.ColorDetection();
+        if(!outtaking)
+            robot.sorter.ColorDetection();
         super.run();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Room" , currentRoom);
@@ -101,7 +104,8 @@ public class TeleOp extends CommandOpMode {
         telemetry.addData("Blue", "%.3f", colors.blue);
         telemetry.addData("Hue", "%.3f", hsvValues[0]);
         telemetry.addData("artefacts " , artefactsOrder[0]+" "+artefactsOrder[1]+" "+artefactsOrder[2]);
-        telemetry.addData("bile" , robot.transfer.timer.seconds());
+        telemetry.addData("bile" , artefacts);
+        telemetry.addData("bool" , robot.transfer.EndLaunchSequence());
         telemetry.update();
         timer.reset();
     }

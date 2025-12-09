@@ -42,8 +42,7 @@ public class Sorter extends SubsystemBase {
 
 
     public void init(){
-        artefacts[0]=0;
-        artefacts[1]=0;
+        artefacts=0;
         sorterTarget=0;
         if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight)robot.colorSensor).enableLight(true);
@@ -96,27 +95,31 @@ public class Sorter extends SubsystemBase {
         Color.colorToHSV(colors.toColor(), hsvValues);
         if(hsvValues[0]>=150 && hsvValues[0]<=200 && !roomMoved)
         {
-            if(artefacts[0]+artefacts[1]<3)
+            if(artefacts<3){
                 ChangeRoom(1);
-            artefacts[0]++;
-            artefactsOrder[currentRoom-1]=0;
-            roomMoved=true;
+                artefacts++;
+                artefactsOrder[currentRoom-1]=0;
+                roomMoved=true;
+            }
         }
         if(hsvValues[0]>200 && hsvValues[0]<=300 && !roomMoved)
         {
-            if(artefacts[0]+artefacts[1]<3)
+            if(artefacts<3)
+            {
                 ChangeRoom(1);
-            artefacts[1]++;
-            artefactsOrder[currentRoom-1]=1;
-            roomMoved=true;
+                artefacts++;
+                artefactsOrder[currentRoom-1]=1;
+                roomMoved=true;
+            }
         }
         if(hsvValues[0]<100 && roomMoved)
             roomMoved=false;
-        if(artefacts[0]+artefacts[1]<3)
+        if(artefacts<3)
             roomFull=false;
-        if(artefacts[0]+artefacts[1]==3 && !roomFull){
+        if(artefacts==3 && !roomFull){
             RoomTrigger();
             roomFull=true;
+
         }
     }
 
