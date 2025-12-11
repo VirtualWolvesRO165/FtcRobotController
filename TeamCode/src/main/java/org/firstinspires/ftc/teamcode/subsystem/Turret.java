@@ -9,6 +9,7 @@ public class Turret extends SubsystemBase {
     private final Robot robot = Robot.getInstance();
 
     private boolean isPowered=false;
+    public static double multiplier=0.3;
 
     public void init(){
 
@@ -28,7 +29,6 @@ public class Turret extends SubsystemBase {
         }
     }
 
-    public void RotateShooter(double modifier){
-        robot.shooterRotation.setPower(modifier);
+    public void RotateShooter(int direction){robot.shooterRotation.setPower(multiplier*direction);
     }
 }

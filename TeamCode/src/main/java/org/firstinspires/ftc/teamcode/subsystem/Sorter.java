@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
 import  static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
+import static org.firstinspires.ftc.teamcode.robot.Global.outtaking;
 import static org.firstinspires.ftc.teamcode.robot.Global.roomIntake;
 import static org.firstinspires.ftc.teamcode.robot.Global.roomOuttake;
 
@@ -24,13 +25,10 @@ public class Sorter extends SubsystemBase {
 
     private final Robot robot = Robot.getInstance();
     ///SorterMotor
-    private PIDController controller;
-    public static double kp=0.0025,ki=0,kd=0,kf=0;
     public static int sorterTarget=0;
     public static int sorterPos = 0;
-    public static double power=0.7 , lowpower=0.3;
-    private boolean intakePos=true;
-    private static int difference=0;
+    public static double power=0.7;
+    public static boolean intakePos=true;
     private final double ticks_in_degrees = 700/180.0;
 
     ///ColorSensor
@@ -58,10 +56,7 @@ public class Sorter extends SubsystemBase {
 //        double pid = controller.calculate(sorterPos,sorterTarget);
         robot.sorterMotor.setTargetPosition(sorterTarget);
         robot.sorterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if(Math.abs(sorterTarget-sorterPos)<=difference)
-            robot.sorterMotor.setPower(lowpower);
-        else
-            robot.sorterMotor.setPower(power);
+        robot.sorterMotor.setPower(power);
     }
 
     public void SetTarget(int target){
@@ -117,10 +112,23 @@ public class Sorter extends SubsystemBase {
         if(artefacts<3)
             roomFull=false;
         if(artefacts==3 && !roomFull){
+            outtaking=true;
             RoomTrigger();
             roomFull=true;
 
         }
     }
 
+    public void ResetSorter(){
+        artefacts=0;
+        currentRoom=1;
+        artefactsOrder = new int[]{-1,-1,-1};
+        sorterTarget=0;
+        intakePos=false;
+        roomFull=false;
+        outtaking=false;
+        robot.transfer.LowerTransfer();
+
+
+    }
 }

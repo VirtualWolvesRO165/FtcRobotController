@@ -9,8 +9,8 @@ public class Global {
         AUTO
     }
     public static int currentRoom=1;
-    public static int[] roomIntake = {0 ,180 ,370};
-    public static int[] roomOuttake = {265, 445, 610};
+    public static int[] roomIntake = {0 ,180 ,360};
+    public static int[] roomOuttake = {270, 445, 630};
     //-1=no bila 0=green 1=purple
     public static int[] artefactsOrder={-1 ,-1 ,-1};
     //[0]=green,[1]=purple

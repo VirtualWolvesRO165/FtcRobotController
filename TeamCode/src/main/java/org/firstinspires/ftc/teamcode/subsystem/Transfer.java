@@ -12,19 +12,17 @@ import static org.firstinspires.ftc.teamcode.robot.Global.roomIntake;
 import static org.firstinspires.ftc.teamcode.robot.Global.roomOuttake;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
 import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
+import static org.firstinspires.ftc.teamcode.subsystem.Sorter.intakePos;
 
 @Config
 public class Transfer extends SubsystemBase {
 
     private final Robot robot = Robot.getInstance();
-    public static ElapsedTime timer = new ElapsedTime();
     public static double posup=0;
-    public static double posdown=0.9;
-    private boolean up=false , button=false;
+    public static double posdown=1;
 
     public void LaunchStage1(){
-        if(robot.intakeMotor.getPower()>0 && robot.shooterUp.getPower()>0 && artefactsOrder[currentRoom-1]>-1){
-            outtaking=true;
+        if(robot.shooterUp.getPower()>0 && outtaking && !intakePos){
             RiseTransfer();
             if(artefactsOrder[currentRoom-1]>-1)
                 artefacts--;
@@ -32,12 +30,14 @@ public class Transfer extends SubsystemBase {
         }
     }
     public void LaunchStage2(){
+        if(artefacts==0){
+            robot.sorter.RoomTrigger();
+            LowerTransfer();
+            EndOuttake();
+            return;
+        }
         LowerTransfer();
         robot.sorter.ChangeRoom(1);
-    }
-
-    public boolean EndLaunchSequence(){
-        return (artefacts==0);
     }
 
     public void EndOuttake(){
@@ -46,6 +46,5 @@ public class Transfer extends SubsystemBase {
 
     public void LowerTransfer(){robot.transferServo.setPosition(posdown);}
     public void RiseTransfer(){robot.transferServo.setPosition(posup);}
-
 
 }

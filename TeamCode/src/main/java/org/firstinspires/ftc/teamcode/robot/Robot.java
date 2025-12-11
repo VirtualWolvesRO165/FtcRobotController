@@ -29,12 +29,9 @@ public class Robot{
     public  DcMotorEx rightFront;
     public DcMotorEx rightBack;
     public DcMotorEx intakeMotor; //power
-    public DcMotorEx shooterUp
-; //power
-    public DcMotorEx shooterDown
-; //power
+    public DcMotorEx shooterUp; //power
+    public DcMotorEx shooterDown; //power
     public DcMotorEx sorterMotor; //PID
-
     public Servo shooterAngle; //range
     public CRServo shooterRotation; //range
     public Servo transferServo; //0-1
