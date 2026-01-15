@@ -1,48 +1,44 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.subsystem.Drive;
-import org.firstinspires.ftc.teamcode.robot.Global;
-import org.firstinspires.ftc.teamcode.subsystem.Sorter;
-import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
-import org.firstinspires.ftc.teamcode.robot.Global;
-import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
-import static org.firstinspires.ftc.teamcode.robot.Global.roomIntake;
-import static org.firstinspires.ftc.teamcode.robot.Global.roomOuttake;
-import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
-import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
 
 public class Robot{
 
+    ///DRIVE
     public DcMotorEx leftFront;
     public DcMotorEx leftBack;
     public  DcMotorEx rightFront;
     public DcMotorEx rightBack;
+
+    ///INTAKE
     public DcMotorEx intakeMotor; //power
+    public Servo dropDownServoLeft;
+    public Servo dropDownServoRight;
+    public Servo stopper;
+
+    ///TURRET
     public DcMotorEx shooterUp; //power
     public DcMotorEx shooterDown; //power
-    public DcMotorEx sorterMotor; //PID
     public Servo shooterAngle; //range
-    public CRServo shooterRotation; //range
-    public Servo transferServo; //0-1
+    public DcMotorEx shooterRotation; //range
 
     ///Sensors
     public NormalizedColorSensor colorSensor;
 
+    ///VISION
+    public Limelight3A limelight;
+
     public Drive drive;
     public Turret turret;
-    public Sorter sorter;
-    public Transfer transfer;
     public Intake intake;
 
     private static Robot instance = new Robot();
@@ -54,8 +50,16 @@ public class Robot{
         return instance;
     }
 
+    public enum RobotState{
+        SEARCHING, /// DRIVE-ENABLED , TURRET-DISABLED , INTAKE-ENABLED
+        POSITIONING , /// DRIVE-ENABLED , TURRET-DISABLED , INTAKE-DISABLED
+        SHOOTING , /// DRIVE-DISABLED , TURRET-ENABLED , INTAKE-ENABLED
+    }
+
+    public static RobotState robotState = RobotState.SEARCHING;
+
     public void init(HardwareMap hardwareMap){
-        ///Motors
+        ///DRIVE
         leftFront = hardwareMap.get(DcMotorEx.class , "leftFront");
         leftBack = hardwareMap.get(DcMotorEx.class , "leftBack");
         rightFront = hardwareMap.get(DcMotorEx.class , "rightFront");
@@ -74,6 +78,7 @@ public class Robot{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        ///TURRET
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
         shooterDown = hardwareMap.get(DcMotorEx.class , "shooterDown ");
 
@@ -83,38 +88,41 @@ public class Robot{
         shooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         shooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        sorterMotor = hardwareMap.get(DcMotorEx.class , "sorter");
-        sorterMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        sorterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        sorterMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        sorterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterRotation = hardwareMap.get(DcMotorEx.class , "shooterRotation");
+        shooterRotation.setDirection(DcMotorEx.Direction.FORWARD);
+        shooterRotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        shooterAngle = hardwareMap.get(Servo.class , "shooterAngle");
+
+        ///INTAKE
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
         intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
 
+        dropDownServoLeft = hardwareMap.get(Servo.class , "dropDownLeft");
+        dropDownServoRight = hardwareMap.get(Servo.class , "dropDownRight");
 
-        ///Servos
-        transferServo = hardwareMap.get(Servo.class , "transfer");
-        transferServo.setPosition(0.9);
+        dropDownServoLeft.setDirection(Servo.Direction.REVERSE);
+        dropDownServoRight.setDirection(Servo.Direction.FORWARD);
 
-        shooterRotation = hardwareMap.get(CRServo.class , "shooterRotation");
-        shooterRotation.setDirection(DcMotorSimple.Direction.FORWARD);
+        stopper = hardwareMap.get(Servo.class , "stopper");
 
-        ///Sensors
+        ///SENSORS
         colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
 
-        ///Globals
+        ///VISION
+        limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
-        currentRoom=1;
-        artefactsOrder= new int[]{-1 ,-1 ,-1};
-        artefacts= 0;
 
         drive = new Drive();
         turret = new Turret();
-        sorter = new Sorter();
-        transfer = new Transfer();
         intake = new Intake();
     }
 
+    public void Update(){
+        switch (robotState){
+            case SEARCHING:
+
+        }
+    }
 
 }

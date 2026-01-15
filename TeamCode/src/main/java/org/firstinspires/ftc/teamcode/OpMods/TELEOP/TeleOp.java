@@ -2,30 +2,23 @@ package org.firstinspires.ftc.teamcode.OpMods.TELEOP;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
-import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.PerpetualCommand;
-import com.seattlesolvers.solverslib.command.RepeatCommand;
-import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import static org.firstinspires.ftc.teamcode.robot.Global.artefacts;
-import static org.firstinspires.ftc.teamcode.robot.Global.artefactsOrder;
-import static org.firstinspires.ftc.teamcode.robot.Global.currentRoom;
-import static org.firstinspires.ftc.teamcode.robot.Global.outtaking;
-import static org.firstinspires.ftc.teamcode.subsystem.Sorter.colors;
-import static org.firstinspires.ftc.teamcode.subsystem.Sorter.hsvValues;
+import static org.firstinspires.ftc.teamcode.robot.Constants.opModType;
+import static org.firstinspires.ftc.teamcode.subsystem.Turret.turretRotationState;
 
-import org.firstinspires.ftc.teamcode.commands.DriveCommand;
-import org.firstinspires.ftc.teamcode.commands.EmptyCommand;
+import org.firstinspires.ftc.teamcode.robot.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="1TELEOP")
 public class TeleOp extends CommandOpMode {
@@ -39,111 +32,56 @@ public class TeleOp extends CommandOpMode {
     public void initialize(){
 
         super.reset();
-        driver = new GamepadEx(gamepad1);
-        operator = new GamepadEx(gamepad2);
-        robot.init(hardwareMap);
-        robot.sorter.init();
-        register(robot.drive);
+        driver = new GamepadEx(gamepad1); ///creates driver control
+        operator = new GamepadEx(gamepad2); ///creates operator control
+        opModType = Constants.OpModTypes.TELEOP; ///select game type
+        robot.init(hardwareMap); ///initialize robot
+        register(robot.drive); ///nush ce face da trebuie
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
-                new InstantCommand(()->robot.turret.RotateShooter(-1))
+        /// changes state of intake when Y is pressed
+        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+                new InstantCommand(()->robot.intake.Toggle())
         );
+
+        /// checks state of shooter when A is pressed
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                new InstantCommand(()->robot.turret.ToggleShooter())
+        );
+
+
+        /// moves turret left when left dpad is held
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenHeld(
+                new InstantCommand(()->turretRotationState = Turret.TurretRotationState.LEFT)
+        );
+        /// moves turret right when right dpad is held
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenHeld(
+                new InstantCommand(()->turretRotationState = Turret.TurretRotationState.RIGHT)
+        );
+        /// stops the movement of turret to the left when left dpad is released
         operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenReleased(
-                new InstantCommand(()->robot.turret.RotateShooter(0))
+                new InstantCommand(()->turretRotationState = Turret.TurretRotationState.STOP)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
-                new InstantCommand(()->robot.turret.RotateShooter(1))
-        );
+        /// stops the movement of turret to the right when right dpad is released
 
         operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenReleased(
-                new InstantCommand(()->robot.turret.RotateShooter(0))
+                new InstantCommand(()->turretRotationState = Turret.TurretRotationState.STOP)
         );
-
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new InstantCommand(() -> robot.turret.ShooterPower())
-        );
-
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
-                new InstantCommand(()->{
-                    robot.sorter.ChangeRoom(1);
-                })
-        );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
-                new InstantCommand(()->{
-                    robot.sorter.ChangeRoom(-1);
-                })
-        );
-
-        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-                new InstantCommand(()->{
-                    robot.sorter.RoomTrigger();
-                }));
-//        RepeatCommand launchSequence = new RepeatCommand(
-//                new SequentialCommandGroup(
-//                        new WaitCommand(1500),
-//                        new InstantCommand(()->robot.transfer.LaunchStage1()),
-//                        new WaitCommand(1000),
-//                        new InstantCommand(()->robot.transfer.LaunchStage2())
-//                ),
-//                ()->robot.transfer.EndLaunchSequence()
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-//                new SequentialCommandGroup(
-//                        launchSequence,
-//                        new WaitUntilCommand(launchSequence::isFinished),
-//                        new InstantCommand(()->robot.transfer.LowerTransfer()),
-//                        new WaitCommand(200),
-//                        new InstantCommand(()->robot.sorter.RoomTrigger()),
-//                        new InstantCommand(()->robot.transfer.EndOuttake())
-//                ));
-
-        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new InstantCommand(()->robot.transfer.LaunchStage1()),
-                                new WaitCommand(1000),
-                                new InstantCommand(()->robot.transfer.LaunchStage2())
-                        ),
-                        new EmptyCommand(),
-                        ()->outtaking
-                )
-        );
-        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new InstantCommand(()->{
-                    robot.intake.PowerIntake();
-                })
-        );
-
-        operator.getGamepadButton(GamepadKeys.Button.OPTIONS).whenPressed(
-                new InstantCommand(()->robot.sorter.ResetSorter())
-        );
-
-//        operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-//                new InstantCommand(()->robot.transfer.RiseTransfer())
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
-//                new InstantCommand(()->robot.transfer.LowerTransfer())
-//        );
 
         super.run();
     }
 
+    /// called every tick
     @Override
     public void run(){
         if(timer==null)
             timer = new ElapsedTime();
+
         robot.drive.PowerMotor(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
-        robot.sorter.loop();
-        if(!outtaking)
-            robot.sorter.ColorDetection();
+        robot.intake.Update(); ///look in subsystem for more info
+        robot.turret.Update(); ///look in subsystem for more info
         super.run();
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addData("Room" , currentRoom);
-        telemetry.addData("SorterPos" , robot.sorter.sorterPos);
-        telemetry.addData("SorterTarget" , robot.sorter.sorterTarget);
-        telemetry.addData("artefacts " , artefactsOrder[0]+" "+artefactsOrder[1]+" "+artefactsOrder[2]);
-        telemetry.addData("bile" , artefacts);
-        telemetry.addData("outtaking" , outtaking);
         telemetry.update();
         timer.reset();
     }
