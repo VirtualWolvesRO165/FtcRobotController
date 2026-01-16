@@ -22,27 +22,22 @@ public class Transfer extends SubsystemBase {
     public static double posdown=1;
 
     public void LaunchStage1(){
-        if(robot.shooterUp.getPower()>0 && outtaking && !intakePos){
+        if(robot.shooterUp.getPower()>0){
             RiseTransfer();
-            if(artefactsOrder[currentRoom-1]>-1)
-                artefacts--;
-            artefactsOrder[currentRoom-1]=-1;
         }
     }
     public void LaunchStage2(){
-        if(artefacts==0){
-            robot.sorter.RoomTrigger();
-            LowerTransfer();
-            EndOuttake();
-            return;
-        }
         LowerTransfer();
         robot.sorter.ChangeRoom(1);
+        if(artefactsOrder[currentRoom-1]>-1)
+            artefacts--;
+        artefactsOrder[currentRoom-1]=-1;
     }
 
-    public void EndOuttake(){
-        outtaking=false;
+    public boolean EndLaunchSequence(){
+        return artefacts==0;
     }
+
 
     public void LowerTransfer(){robot.transferServo.setPosition(posdown);}
     public void RiseTransfer(){robot.transferServo.setPosition(posup);}

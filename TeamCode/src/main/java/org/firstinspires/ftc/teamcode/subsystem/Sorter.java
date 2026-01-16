@@ -40,6 +40,7 @@ public class Sorter extends SubsystemBase {
 
 
     public void init(){
+        outtaking=false;
         artefacts=0;
         sorterTarget=0;
         if (robot.colorSensor instanceof SwitchableLight) {
@@ -109,13 +110,11 @@ public class Sorter extends SubsystemBase {
         }
         if(hsvValues[0]<100 && roomMoved)
             roomMoved=false;
-        if(artefacts<3)
+        if(artefacts<3 && !outtaking)
             roomFull=false;
         if(artefacts==3 && !roomFull){
-            outtaking=true;
             RoomTrigger();
             roomFull=true;
-
         }
     }
 
@@ -128,7 +127,9 @@ public class Sorter extends SubsystemBase {
         roomFull=false;
         outtaking=false;
         robot.transfer.LowerTransfer();
+    }
 
-
+    public void SorterOverwrite(){
+        sorterTarget=sorterPos;
     }
 }

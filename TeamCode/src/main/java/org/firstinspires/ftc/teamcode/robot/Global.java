@@ -10,7 +10,7 @@ public class Global {
     }
     public static int currentRoom=1;
     public static int[] roomIntake = {0 ,180 ,360};
-    public static int[] roomOuttake = {270, 445, 630};
+    public static int[] roomOuttake = {270, 445, 610};
     //-1=no bila 0=green 1=purple
     public static int[] artefactsOrder={-1 ,-1 ,-1};
     //[0]=green,[1]=purple

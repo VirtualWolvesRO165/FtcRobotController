@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 public class Intake extends SubsystemBase {
         private final Robot robot = Robot.getInstance();
         private boolean power=false;
-        public static double intakePower=0.7;
+        public static double intakePower=1;
 
         public void PowerIntake(){
             power=!power;
@@ -19,4 +19,14 @@ public class Intake extends SubsystemBase {
             else
                 robot.intakeMotor.setPower(0);
         }
+
+        public void SetIntake(int direction){
+            robot.intakeMotor.setPower(direction*intakePower);
+        }
+
+        public void OverwritePower(double dif){
+            intakePower+=dif;
+            robot.intakeMotor.setPower(intakePower);
+        }
+
 }
