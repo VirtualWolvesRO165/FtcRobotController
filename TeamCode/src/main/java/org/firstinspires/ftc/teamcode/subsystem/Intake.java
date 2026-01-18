@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import static org.firstinspires.ftc.teamcode.robot.Constants.DROPDOWN_ACTIVE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.DROPDOWN_REST_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;

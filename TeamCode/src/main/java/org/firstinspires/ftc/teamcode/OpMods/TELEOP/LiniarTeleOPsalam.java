@@ -1,56 +1,45 @@
-package org.firstinspires.ftc.teamcode.OpMods.TELEOP;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.robot.Robot;
-
-
-
-
-@TeleOp(name="TeleOpLinear")
-public class LiniarTeleOPsalam extends LinearOpMode {
-    public DcMotorEx leftFront;
-    public DcMotorEx leftBack;
-    public  DcMotorEx rightFront;
-    public DcMotorEx rightBack;
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-        leftFront = hardwareMap.get(DcMotorEx.class , "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class , "leftBack");
-        rightFront = hardwareMap.get(DcMotorEx.class , "rightFront");
-        rightBack = hardwareMap.get(DcMotorEx.class , "rightBack");
-
-        leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-
-        leftFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        ElapsedTime runtime = new ElapsedTime();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        runtime.reset();
-        waitForStart();
-        while (opModeIsActive()) {
-            leftFront.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x)*2);
-            leftBack.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x)*2);
-            rightFront.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x)*2);
-            rightBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x)*2);
-            telemetry.addData("Runtime Seconds - ", runtime.seconds());
-            telemetry.update();
-        }
-    }
-}
+//package org.firstinspires.ftc.teamcode;
+//
+//import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//import com.qualcomm.robotcore.hardware.DcMotorEx;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//import com.qualcomm.robotcore.hardware.Servo;
+//
+//@TeleOp(name="Test Servo")
+//public class Test_servo extends OpMode {
+//
+//    private Servo testservo;
+//    private DcMotorEx testmotor;
+//
+//    @Override
+//    public void init() {
+//        testservo = hardwareMap.get(Servo.class, "testservo");
+//        testservo.setDirection(Servo.Direction.FORWARD);
+//        testmotor  = hardwareMap.get(DcMotorEx.class, "testmotor");
+//        testmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+//    }
+//
+//    @Override
+//    public void loop() {
+//
+//        if (gamepad1.b)
+//            testservo.setPosition(0);
+//        if (gamepad1.x)
+//            testservo.setPosition(0.5);
+//        if (gamepad1.a)
+//            testservo.setPosition(1);
+//        if(gamepad1.left_trigger>0.1)
+//            testmotor.setPower(1);
+//        testmotor.setPower(0);
+//        if(gamepad1.right_trigger>0.1)
+//            testmotor.setPower(-1);
+//                --+
+//
+//                testmotor.setPower(0);
+//
+//        telemetry.addData("Servo Position", testservo.getPosition());
+//        telemetry.addData("Test Motor", testmotor.getPower());
+//        telemetry.update();
+//    }
+//}

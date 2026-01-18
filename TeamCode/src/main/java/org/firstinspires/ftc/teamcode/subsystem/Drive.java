@@ -8,11 +8,12 @@ public class Drive extends SubsystemBase
 {
     private final Robot robot = Robot.getInstance();
 
+    }
     public void PowerMotor(double p_drive , double strafe , double turn){
         double denominator = Math.max(Math.abs(p_drive) + Math.abs(strafe) + Math.abs(turn), 1);
-        robot.leftFront.setPower((p_drive+strafe+turn)/denominator);
-        robot.leftBack.setPower((p_drive-strafe+turn)/denominator);
-        robot.rightFront.setPower((p_drive-strafe-turn)/denominator);
-        robot.rightBack.setPower((p_drive+strafe-turn)/denominator);
+        robot.leftFront.setPower((p_drive+strafe+turn));
+        robot.leftBack.setPower((p_drive-strafe+turn));
+        robot.rightFront.setPower((p_drive-strafe-turn));
+        robot.rightBack.setPower((p_drive+strafe-turn));
     }
 }
