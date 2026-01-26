@@ -1,91 +1,43 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
+import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_CLOSE_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_OPEN_POSITION;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @Config
-@Autonomous (name="RedFar")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RedFar")
 public class RedFar extends OpMode {
 
+    private Robot robot = Robot.getInstance();
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-
-    public Pose startPose = new Pose(56 ,8);
+    public Pose startPose = new Pose(88, 8);
 
     public PathChain Path1;
-    public PathChain Path2;
-    public PathChain Path3;
-    public PathChain Path4;
-    public PathChain Path5;
-    public PathChain Path6;
 
     public void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(88.000, 8.000),
 
-                                new Pose(88.000, 36.000)
+                                new Pose(104.000, 15.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path2 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(88.000, 36.000),
-
-                                new Pose(126.000, 36.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path3 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(126.000, 36.000),
-
-                                new Pose(88.000, 8.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path4 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(88.000, 8.000),
-
-                                new Pose(96.000, 60.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path5 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(96.000, 60.000),
-
-                                new Pose(126.000, 60.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path6 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(126.000, 60.000),
-
-                                new Pose(88.000, 8.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
     }
@@ -93,81 +45,32 @@ public class RedFar extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(Path1);
+                robot.shooterUp.setPower(SHOOTER_RPM);
+                robot.shooterDown.setPower(SHOOTER_RPM);
+                robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
                 setPathState(1);
                 break;
             case 1:
-
-            /* You could check for
-            - Follower State: "if(!follower.isBusy()) {}"
-            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
-            - Robot Position: "if(follower.getPose().getX() > 36) {}"
-            */
-
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()) {
-                    /* Score Preload */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(Path2, true);
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
+                    robot.intakeMotor.setPower(INTAKE_POWER);
+                    robot.stopper.setPosition(STOPPER_OPEN_POSITION);
                     setPathState(2);
                 }
                 break;
             case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
-                if (!follower.isBusy()) {
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(Path3, true);
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
+                    robot.intakeMotor.setPower(0);
+                    robot.shooterUp.setPower(0);
+                    robot.shooterDown.setPower(0);
+                    robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
+                    follower.followPath(Path1 , true);
                     setPathState(3);
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
-                    /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(Path3, true);
-                    setPathState(4);
-                }
-                break;
-            case 4:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
-                if (!follower.isBusy()) {
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(Path4, true);
-                    setPathState(5);
-                }
-                break;
-            case 5:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()) {
-                    /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(Path5, true);
-                    setPathState(6);
-                }
-                break;
-            case 6:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
-                if (!follower.isBusy()) {
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(Path6, true);
-                    setPathState(9);
-                }
-                break;
-            case 9:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()) {
-                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(-1);
+
                 }
                 break;
         }
@@ -189,7 +92,6 @@ public class RedFar extends OpMode {
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();
         autonomousPathUpdate();
-
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -205,8 +107,7 @@ public class RedFar extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-
-
+        robot.initAuto(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);

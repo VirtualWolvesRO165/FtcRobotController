@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -36,6 +37,9 @@ public class Robot{
 
     ///VISION
     public Limelight3A limelight;
+
+    ///PINPOINT
+    public GoBildaPinpointDriver pinpoint;
 
     public Drive drive;
     public Turret turret;
@@ -110,8 +114,62 @@ public class Robot{
         colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
 
         ///VISION
-        limelight = hardwareMap.get(Limelight3A.class , "limelight");
+//        limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
+        ///PINPOINT
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class , "pinpoint");
+
+        stopper.setPosition(1);
+        shooterAngle.setPosition(0);
+
+        drive = new Drive();
+        turret = new Turret();
+        intake = new Intake();
+    }
+
+    public void initAuto(HardwareMap hardwareMap){
+        ///TURRET
+        shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
+        shooterDown = hardwareMap.get(DcMotorEx.class , "shooterDown ");
+
+        shooterUp.setDirection(DcMotorEx.Direction.FORWARD);
+        shooterDown.setDirection(DcMotorEx.Direction.REVERSE);
+
+        shooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        shooterUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterDown.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        shooterRotation = hardwareMap.get(DcMotorEx.class , "shooterRotation");
+        shooterRotation.setDirection(DcMotorEx.Direction.FORWARD);
+        shooterRotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        shooterAngle = hardwareMap.get(Servo.class , "shooterAngle");
+
+        ///INTAKE
+        intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
+        intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
+
+        dropDownServoLeft = hardwareMap.get(Servo.class , "dropDownLeft");
+        dropDownServoRight = hardwareMap.get(Servo.class , "dropDownRight");
+
+        dropDownServoLeft.setDirection(Servo.Direction.REVERSE);
+        dropDownServoRight.setDirection(Servo.Direction.FORWARD);
+
+        stopper = hardwareMap.get(Servo.class , "stopper");
+
+        ///SENSORS
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
+
+        ///VISION
+//        limelight = hardwareMap.get(Limelight3A.class , "limelight");
+
+        ///PINPOINT
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class , "pinpoint");
+
+        stopper.setPosition(1);
+        shooterAngle.setPosition(0);
 
         drive = new Drive();
         turret = new Turret();

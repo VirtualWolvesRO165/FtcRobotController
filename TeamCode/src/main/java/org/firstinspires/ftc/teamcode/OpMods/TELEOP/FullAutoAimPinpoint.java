@@ -85,7 +85,7 @@ public class FullAutoAimPinpoint extends OpMode {
 
     @Override
     public void loop() {
-        // ================= ALLIANCE =================
+        // ================= Alliance =================
         ///  if (gamepad1.x) isBlue = true;
         if (gamepad1.b) isBlue = false;
 

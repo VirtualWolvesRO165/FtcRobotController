@@ -1,11 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
-import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
-import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
-import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_CLOSE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_OPEN_POSITION;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -19,24 +13,24 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Auto")
-public class Auto extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueClose")
+public class BlueClose extends OpMode {
 
     private Robot robot = Robot.getInstance();
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    public Pose startPose = new Pose(56, 8);
+    public Pose startPose = new Pose(28, 128);
 
     public PathChain Path1;
 
     public void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.000, 8.000),
+                                new Pose(28.000, 128.000),
 
-                                new Pose(40.000, 15.000)
+                                new Pose(16.000, 106.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(0))
 
@@ -46,29 +40,13 @@ public class Auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                robot.shooterUp.setPower(SHOOTER_RPM);
-                robot.shooterDown.setPower(SHOOTER_RPM);
-                robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
-                setPathState(1);
+                if(pathTimer.getElapsedTimeSeconds()>27){
+                    follower.followPath(Path1 , true);
+                    setPathState(1);
+                }
+
                 break;
             case 1:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    robot.intakeMotor.setPower(INTAKE_POWER);
-                    robot.stopper.setPosition(STOPPER_OPEN_POSITION);
-                    setPathState(2);
-                }
-                break;
-            case 2:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    robot.intakeMotor.setPower(0);
-                    robot.shooterUp.setPower(0);
-                    robot.shooterDown.setPower(0);
-                    robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
-                    follower.followPath(Path1 , true);
-                    setPathState(3);
-                }
-                break;
-            case 3:
                 if (!follower.isBusy()) {
                     setPathState(-1);
 
