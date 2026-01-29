@@ -44,7 +44,6 @@ public class Robot{
     public Drive drive;
     public Turret turret;
     public Intake intake;
-
     private static Robot instance = new Robot();
     public boolean enabled;
     public static Robot getInstance(){
@@ -53,7 +52,6 @@ public class Robot{
         instance.enabled = true;
         return instance;
     }
-
     public enum RobotState{
         SEARCHING, /// DRIVE-ENABLED , TURRET-DISABLED , INTAKE-ENABLED
         POSITIONING , /// DRIVE-ENABLED , TURRET-DISABLED , INTAKE-DISABLED
@@ -179,7 +177,7 @@ public class Robot{
     public void Update(){
         switch (robotState){
             case SEARCHING:
-
+                break;
         }
     }
 
