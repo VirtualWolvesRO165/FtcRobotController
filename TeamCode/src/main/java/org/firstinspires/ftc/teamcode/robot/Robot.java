@@ -1,16 +1,24 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.START_POSE;
+
+import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Drive;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Vision;
 
 public class Robot{
 
@@ -19,12 +27,15 @@ public class Robot{
     public DcMotorEx leftBack;
     public  DcMotorEx rightFront;
     public DcMotorEx rightBack;
+    public Follower follower;
 
     ///INTAKE
     public DcMotorEx intakeMotor; //power
     public Servo dropDownServoLeft;
     public Servo dropDownServoRight;
     public Servo stopper;
+    public DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensor2;
 
     ///TURRET
     public DcMotorEx shooterUp; //power
@@ -32,8 +43,11 @@ public class Robot{
     public Servo shooterAngle; //range
     public DcMotorEx shooterRotation; //range
 
-    ///Sensors
+    ///AUX
     public NormalizedColorSensor colorSensor;
+    public VoltageSensor batteryVoltage;
+
+
 
     ///VISION
     public Limelight3A limelight;
@@ -44,6 +58,7 @@ public class Robot{
     public Drive drive;
     public Turret turret;
     public Intake intake;
+    public Vision vision;
     private static Robot instance = new Robot();
     public boolean enabled;
     public static Robot getInstance(){
@@ -80,6 +95,10 @@ public class Robot{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(START_POSE);
+        START_HEADING = Math.toDegrees(follower.getHeading());
+
         ///TURRET
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
         shooterDown = hardwareMap.get(DcMotorEx.class , "shooterDown ");
@@ -96,6 +115,9 @@ public class Robot{
 
         shooterAngle = hardwareMap.get(Servo.class , "shooterAngle");
 
+        batteryVoltage = hardwareMap.voltageSensor.iterator().next();
+
+
         ///INTAKE
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
         intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -110,9 +132,12 @@ public class Robot{
 
         ///SENSORS
         colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
+        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
 
         ///VISION
-//        limelight = hardwareMap.get(Limelight3A.class , "limelight");
+        limelight = hardwareMap.get(Limelight3A.class , "limelight");
+        limelight.pipelineSwitch(1);
 
         ///PINPOINT
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class , "pinpoint");
@@ -123,6 +148,7 @@ public class Robot{
         drive = new Drive();
         turret = new Turret();
         intake = new Intake();
+        vision = new Vision();
     }
 
     public void initAuto(HardwareMap hardwareMap){
@@ -161,7 +187,7 @@ public class Robot{
         colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
 
         ///VISION
-//        limelight = hardwareMap.get(Limelight3A.class , "limelight");
+        limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
         ///PINPOINT
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class , "pinpoint");
@@ -172,11 +198,21 @@ public class Robot{
         drive = new Drive();
         turret = new Turret();
         intake = new Intake();
+        vision = new Vision();
     }
 
     public void Update(){
         switch (robotState){
             case SEARCHING:
+                intake.StartIntake();
+                break;
+            case POSITIONING:
+                intake.StopIntake();
+                turret.StartShooter();
+                break;
+            case SHOOTING:
+                intake.StartIntake();
+                intake.OpenStopper();
                 break;
         }
     }

@@ -4,18 +4,22 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import static org.firstinspires.ftc.teamcode.robot.Constants.DROPDOWN_ACTIVE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.DROPDOWN_REST_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_CLOSE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_OPEN_POSITION;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @Config
 public class Intake extends SubsystemBase {
         private final Robot robot = Robot.getInstance();
-
+        private ElapsedTime fullCheckTimer = new ElapsedTime();
+        private boolean isFullCheck=false;
         public enum IntakeState{
             FORWORD , ///INTAKE
             REVERSE , ///EJECT, not implemented
@@ -65,10 +69,12 @@ public class Intake extends SubsystemBase {
 
             switch (stopperState){
                 case OPEN:
-                    robot.stopper.setPosition(STOPPER_OPEN_POSITION);
+                    if(Math.abs(robot.shooterUp.getVelocity()-SHOOTER_RPM)<50)
+                        robot.stopper.setPosition(STOPPER_OPEN_POSITION);
                     break;
                 case CLOSE:
-                    robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
+                    if(robot.distanceSensor2.getDistance(DistanceUnit.CM)>10 || robot.robotState != Robot.RobotState.SHOOTING)
+                        robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
             }
         }
 
@@ -102,5 +108,20 @@ public class Intake extends SubsystemBase {
             stopperState=StopperState.CLOSE;
         }
 
+        public void CheckIntake() {
+            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<10 && !isFullCheck){
+                fullCheckTimer = new ElapsedTime();
+                isFullCheck=true;
+            }
+            if(fullCheckTimer.seconds()>.5){
+                robot.robotState = Robot.RobotState.POSITIONING;
+            }
+            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>10)
+                isFullCheck=false;
+
+            if(robot.distanceSensor2.getDistance(DistanceUnit.CM)>10 && robot.robotState == Robot.RobotState.SHOOTING)
+                robot.robotState = Robot.RobotState.SEARCHING;
+
+        }
 
 }

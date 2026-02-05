@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -32,6 +33,7 @@ public class BlueFar9Bile extends OpMode {
     public PathChain Path4;
     public PathChain Path5;
     public PathChain Path6;
+    public PathChain Path7;
 
     public void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
@@ -91,6 +93,18 @@ public class BlueFar9Bile extends OpMode {
                                 new Pose(56.000, 14.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+
+
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(44.000, 36.000),
+
+                                new Pose(17.000, 36.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
     }
@@ -155,7 +169,7 @@ public class BlueFar9Bile extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds()>5){
                         robot.intake.CloseStopper();
                         robot.intake.StopIntake();
-                        follower.followPath(Path2 , true);
+                        follower.followPath(Path7 , true);
                         setPathState(7);
                     }
                 }
@@ -184,7 +198,8 @@ public class BlueFar9Bile extends OpMode {
         follower.update();
         autonomousPathUpdate();
         robot.intake.Update();
-        robot.turret.Update();
+        robot.turret.UpdateAuto();
+        ROBOT_POSITION = follower.getPose();
         robot.turret.UpdateTurret(TURRET_TARGET);
         robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
 

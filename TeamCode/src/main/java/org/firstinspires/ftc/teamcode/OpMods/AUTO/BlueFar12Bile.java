@@ -125,7 +125,7 @@ public class BlueFar12Bile extends OpMode {
                         new BezierLine(
                                 new Pose(27, 9),
 
-                                new Pose(15, 10)
+                                new Pose(17, 11)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -133,7 +133,7 @@ public class BlueFar12Bile extends OpMode {
 
         Path10 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15, 10),
+                                new Pose(17, 11),
 
                                 new Pose(58.000, 17.000)
                         )

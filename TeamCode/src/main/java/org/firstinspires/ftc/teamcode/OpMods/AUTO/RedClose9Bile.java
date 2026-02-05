@@ -1,5 +1,13 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
+import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -7,7 +15,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -20,6 +27,7 @@ public class RedClose9Bile extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+    private double startHeading;
 
     public Pose startPose = new Pose(116, 128);
 
@@ -95,21 +103,26 @@ public class RedClose9Bile extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+                robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
+
+                robot.shooterUp.setPower(.85);
+                robot.shooterDown.setPower(.85);
                 robot.intake.StartIntake();
-                robot.turret.StartShooter();
+                robot.intake.CloseStopper();
+                TURRET_TARGET=220;
                 follower.followPath(Path1 , true);
                 setPathState(1);
                 break;
 
             case 1:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>2)
+                    if(pathTimer.getElapsedTimeSeconds()>3)
                     {
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>4){
+                        if(pathTimer.getElapsedTimeSeconds()>5){
                             robot.intake.CloseStopper();
                             robot.intake.StopIntake();
-                            robot.turret.StopShooter();
+
                             setPathState(2);
                         }
                     }
@@ -119,7 +132,7 @@ public class RedClose9Bile extends OpMode {
             case 2:
                 if (!follower.isBusy()) {
                     robot.intake.StartIntake();
-                    follower.followPath(Path2 , true);
+                    follower.followPath(Path2 ,.3 ,  true);
                     setPathState(3);
                 }
                 break;
@@ -133,10 +146,9 @@ public class RedClose9Bile extends OpMode {
             case 4:
                 if (!follower.isBusy()) {
                     robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2){
+                    if(pathTimer.getElapsedTimeSeconds()>4){
                         robot.intake.CloseStopper();
                         robot.intake.StopIntake();
-                        robot.turret.StopShooter();
                         follower.followPath(Path4 , true);
                         setPathState(5);
                     }
@@ -145,7 +157,7 @@ public class RedClose9Bile extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     robot.intake.StartIntake();
-                    follower.followPath(Path5 , true);
+                    follower.followPath(Path5 , .3 , true);
                     setPathState(6);
                 }
                 break;
@@ -159,17 +171,19 @@ public class RedClose9Bile extends OpMode {
             case 7:
                 if (!follower.isBusy()) {
                     robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2){
+                    if(pathTimer.getElapsedTimeSeconds()>4){
                         robot.intake.CloseStopper();
                         robot.intake.StopIntake();
-                        robot.turret.StopShooter();
-                        follower.followPath(Path2 , true);
+
+                        follower.followPath(Path2 , .3 , true);
                         setPathState(8);
                     }
                 }
                 break;
             case 8:
                 if(!follower.isBusy()){
+                    SHOOTER_RPM=6000;
+                    robot.turret.StopShooter();
                     setPathState(-1);
                 }
                 break;
@@ -193,12 +207,19 @@ public class RedClose9Bile extends OpMode {
         follower.update();
         autonomousPathUpdate();
         robot.intake.Update();
-        robot.turret.Update();
+        robot.turret.UpdateAuto();
+        robot.turret.UpdateTurret(TURRET_TARGET);
+        robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
+        ROBOT_X = follower.getPose().getX();
+        ROBOT_Y = follower.getPose().getY();
+        HEADING = Math.toDegrees(follower.getHeading());
+        ROBOT_POSITION = follower.getPose();
+
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("heading", HEADING);
         telemetry.update();
     }
 
@@ -213,7 +234,7 @@ public class RedClose9Bile extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
-
+        startHeading = Math.toDegrees(follower.getHeading());
 
     }
 
