@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ADDITIONAL_OFFSET_TURRET;
-import static org.firstinspires.ftc.teamcode.robot.Constants.OFFSET_TURRET;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -18,10 +17,10 @@ public class Vision extends SubsystemBase {
 
     public static LimelightState limelightState = LimelightState.APRIL_TAG;
 
-    public void Update() {
+    public void Update(int id) {
         switch (limelightState) {
             case APRIL_TAG:
-                GoalOffsetCalculator();
+                GoalOffsetCalculator(id);
         }
     }
 
@@ -36,10 +35,10 @@ public class Vision extends SubsystemBase {
             return pythonOutputs[2];
         return 69;
     }
-    public void GoalOffsetCalculator() {
+    public void GoalOffsetCalculator(int id) {
         pythonOutputs = robot.limelight.getLatestResult().getPythonOutput();
         if (pythonOutputs != null && pythonOutputs.length > 0) {
-            if (pythonOutputs[2] == 20) {
+            if (pythonOutputs[2] == id) {
                 ADDITIONAL_OFFSET_TURRET = (int) pythonOutputs[1];
             } else
                 ADDITIONAL_OFFSET_TURRET = 0;

@@ -20,7 +20,9 @@ public class Constants {
     /// DRIVE
     public static double ROBOT_X;
     public static double ROBOT_Y;
-    public static double ROBOT_RADIUS;
+    public static double ROBOT_RADIUS=25;
+    public static double ENTRY_MARGIN = 2.0; // inches, tune this
+
     public static Pose START_POSE;
     public static boolean IS_IN_FAR=false;
     public static boolean IS_IN_CLOSE=false;
@@ -34,7 +36,8 @@ public class Constants {
 
     /// TURRET
     public static double SHOOTER_RPM =6000;
-    public static double SHOOTER_RPM_OFFSET=300;
+    public static double SHOOTER_RPM_OFFSET=-150;
+    public static double SHOOTER_RPM_AUTO=2000;
     public static double ANGLE_AUTO_POSITION=1;
     public static final double BLUE_BASKET_X=0;
     public static final double BLUE_BASKET_Y=144;

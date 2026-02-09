@@ -8,7 +8,11 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_CLOSE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_OPEN_POSITION;
 
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -20,6 +24,8 @@ public class Intake extends SubsystemBase {
         private final Robot robot = Robot.getInstance();
         private ElapsedTime fullCheckTimer = new ElapsedTime();
         private boolean isFullCheck=false;
+        public static NormalizedRGBA colors= new NormalizedRGBA();
+      public static final float[] hsvValues = new float[3];
         public enum IntakeState{
             FORWORD , ///INTAKE
             REVERSE , ///EJECT, not implemented
@@ -69,11 +75,11 @@ public class Intake extends SubsystemBase {
 
             switch (stopperState){
                 case OPEN:
-                    if(Math.abs(robot.shooterUp.getVelocity()-SHOOTER_RPM)<50)
+//                    if(Math.abs(robot.shooterUp.getVelocity()-SHOOTER_RPM)<50)
                         robot.stopper.setPosition(STOPPER_OPEN_POSITION);
                     break;
                 case CLOSE:
-                    if(robot.distanceSensor2.getDistance(DistanceUnit.CM)>10 || robot.robotState != Robot.RobotState.SHOOTING)
+//                    if(robot.robotState != Robot.RobotState.SHOOTING)
                         robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
             }
         }
@@ -94,13 +100,6 @@ public class Intake extends SubsystemBase {
             intakeState = IntakeState.STOP;
         }
 
-        public void ToggleStopper(){
-            if(stopperState==StopperState.OPEN)
-                stopperState=StopperState.CLOSE;
-            else
-                stopperState=StopperState.OPEN;
-        }
-
         public void OpenStopper(){
             stopperState=StopperState.OPEN;
         }
@@ -109,19 +108,16 @@ public class Intake extends SubsystemBase {
         }
 
         public void CheckIntake() {
-            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<10 && !isFullCheck){
-                fullCheckTimer = new ElapsedTime();
-                isFullCheck=true;
-            }
-            if(fullCheckTimer.seconds()>.5){
+            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<12){
                 robot.robotState = Robot.RobotState.POSITIONING;
             }
-            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>10)
-                isFullCheck=false;
-
-            if(robot.distanceSensor2.getDistance(DistanceUnit.CM)>10 && robot.robotState == Robot.RobotState.SHOOTING)
-                robot.robotState = Robot.RobotState.SEARCHING;
-
+            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>12 && robot.robotState!= Robot.RobotState.POSITIONING)
+            if(robot.colorSensor instanceof SwitchableLight){
+                ((SwitchableLight)robot.colorSensor).enableLight(true);
+                Color.colorToHSV(colors.toColor(), hsvValues);
+                if(hsvValues[0]>10)
+                    robot.robotState = Robot.RobotState.SEARCHING;
+            }
         }
 
 }

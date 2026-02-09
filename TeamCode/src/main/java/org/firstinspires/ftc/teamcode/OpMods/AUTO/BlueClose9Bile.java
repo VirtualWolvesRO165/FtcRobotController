@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
-import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
-import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -85,7 +83,7 @@ public class BlueClose9Bile extends OpMode {
                         new BezierLine(
                                 new Pose(50.000, 60.000),
 
-                                new Pose(17.000, 62.000)
+                                new Pose(15.000, 62.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -106,9 +104,9 @@ public class BlueClose9Bile extends OpMode {
                         new BezierLine(
                                 new Pose(60.000, 84.000),
 
-                                new Pose(17.000, 86.000)
+                                new Pose(23.000, 86.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
     }
@@ -116,6 +114,7 @@ public class BlueClose9Bile extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+                SHOOTER_RPM_OFFSET+=50;
                 robot.intake.StartIntake();
                 robot.intake.CloseStopper();
                 follower.followPath(Path1 , true);
@@ -138,15 +137,18 @@ public class BlueClose9Bile extends OpMode {
             case 2:
                 if (!follower.isBusy()) {
                     robot.intake.StartIntake();
-                    follower.followPath(Path2 ,.3 ,  true);
+                    follower.followPath(Path2 ,.6 ,  true);
                     setPathState(3);
                 }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    robot.turret.StartShooter();
-                    follower.followPath(Path3 , true);
-                    setPathState(4);
+                    if(pathTimer.getElapsedTimeSeconds()>10){
+                        SHOOTER_RPM_OFFSET+=220;
+                        robot.turret.StartShooter();
+                        follower.followPath(Path3 , true);
+                        setPathState(4);
+                    }
                 }
                 break;
             case 4:
@@ -162,7 +164,7 @@ public class BlueClose9Bile extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     robot.intake.StartIntake();
-                    follower.followPath(Path5 , .3 , true);
+                    follower.followPath(Path5 , .6 , true);
                     setPathState(6);
                 }
                 break;
@@ -179,7 +181,7 @@ public class BlueClose9Bile extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds()>4){
                         robot.intake.CloseStopper();
 
-                        follower.followPath(Path7 , .3 , true);
+                        follower.followPath(Path7 , .6 , true);
                         setPathState(8);
                     }
                 }
@@ -212,12 +214,11 @@ public class BlueClose9Bile extends OpMode {
         robot.intake.Update();
         robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(follower.getHeading()));
         robot.shooterAngle.setPosition(robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))));
-        robot.shooterUp.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))));
-        robot.shooterDown.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))));
-        robot.vision.Update();
+        robot.shooterUp.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET);
+        robot.shooterDown.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET);
+        robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
-        ROBOT_POSITION=follower.getPose();
         HEADING = Math.toDegrees(follower.getHeading());
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);

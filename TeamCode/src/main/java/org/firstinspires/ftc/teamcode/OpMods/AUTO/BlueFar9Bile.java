@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_POSITION;
+
 import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -199,7 +199,6 @@ public class BlueFar9Bile extends OpMode {
         autonomousPathUpdate();
         robot.intake.Update();
         robot.turret.UpdateAuto();
-        ROBOT_POSITION = follower.getPose();
         robot.turret.UpdateTurret(TURRET_TARGET);
         robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
 

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
-import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_POSITION;
+
 import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -190,7 +190,7 @@ public class RedFar9Bile extends OpMode {
         robot.intake.Update();
         robot.turret.UpdateAuto();
         robot.turret.UpdateTurret(TURRET_TARGET);
-        ROBOT_POSITION = follower.getPose();
+
 
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);

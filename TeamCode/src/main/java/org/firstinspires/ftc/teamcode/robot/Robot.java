@@ -35,7 +35,6 @@ public class Robot{
     public Servo dropDownServoRight;
     public Servo stopper;
     public DistanceSensor distanceSensor;
-    public DistanceSensor distanceSensor2;
 
     ///TURRET
     public DcMotorEx shooterUp; //power
@@ -95,9 +94,6 @@ public class Robot{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(START_POSE);
-        START_HEADING = Math.toDegrees(follower.getHeading());
 
         ///TURRET
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
@@ -133,7 +129,6 @@ public class Robot{
         ///SENSORS
         colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
         distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
-        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
@@ -162,14 +157,14 @@ public class Robot{
         shooterUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         shooterDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        shooterUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooterDown.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         shooterRotation = hardwareMap.get(DcMotorEx.class , "shooterRotation");
         shooterRotation.setDirection(DcMotorEx.Direction.FORWARD);
         shooterRotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         shooterAngle = hardwareMap.get(Servo.class , "shooterAngle");
+
+        batteryVoltage = hardwareMap.voltageSensor.iterator().next();
+
 
         ///INTAKE
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
@@ -185,9 +180,11 @@ public class Robot{
 
         ///SENSORS
         colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
+        limelight.pipelineSwitch(1);
 
         ///PINPOINT
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class , "pinpoint");
@@ -202,19 +199,19 @@ public class Robot{
     }
 
     public void Update(){
-        switch (robotState){
-            case SEARCHING:
-                intake.StartIntake();
-                break;
-            case POSITIONING:
-                intake.StopIntake();
-                turret.StartShooter();
-                break;
-            case SHOOTING:
-                intake.StartIntake();
-                intake.OpenStopper();
-                break;
-        }
+//        switch (robotState){
+//            case SEARCHING:
+//                intake.StartIntake();
+//                break;
+//            case POSITIONING:
+//                intake.StopIntake();
+//                turret.StartShooter();
+//                break;
+//            case SHOOTING:
+//                intake.StartIntake();
+//                intake.OpenStopper();
+//                break;
+//        }
     }
 
 }

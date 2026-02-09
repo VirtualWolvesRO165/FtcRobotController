@@ -11,11 +11,14 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ENTRY_MARGIN;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_RADIUS;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
+
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 import java.util.List;
@@ -51,8 +54,12 @@ public class Drive extends SubsystemBase {
         ROBOT_Y = robot.follower.getPose().getY();
         IS_IN_FAR = isInFar(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, farZone.vertices.get(0), farZone.vertices.get(1), farZone.vertices.get(2));
         IS_IN_CLOSE = isInClose(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, closeZone.vertices.get(0), closeZone.vertices.get(1), closeZone.vertices.get(2), closeZone.vertices.get(3), closeZone.vertices.get(4));
-        if((IS_IN_FAR || IS_IN_CLOSE) && robot.robotState == Robot.RobotState.POSITIONING)
-            robot.robotState = Robot.RobotState.SHOOTING;
+//        if((IS_IN_FAR || IS_IN_CLOSE) && robot.robotState == Robot.RobotState.POSITIONING)
+//            robot.robotState = Robot.RobotState.SHOOTING;
+        if(IS_IN_FAR)
+            SHOOTER_RPM_OFFSET=400;
+        if(IS_IN_CLOSE)
+            SHOOTER_RPM_OFFSET=-100;
     }
 
     public double cross(double ax, double ay, double bx, double by, double px, double py) {
@@ -63,18 +70,25 @@ public class Drive extends SubsystemBase {
         double c1 = cross(a.x, a.y, b.x, b.y, px, py);
         double c2 = cross(b.x, b.y, c.x, c.y, px, py);
         double c3 = cross(c.x, c.y, a.x, a.y, px, py);
-        return c1 >= 0 && c2 >= 0 && c3 >= 0;
+
+        return (c1 >= 0 && c2 >= 0 && c3 >= 0) ||
+                (c1 <= 0 && c2 <= 0 && c3 <= 0);
     }
 
-    public boolean pointInClose(double px, double py, Point a, Point b, Point c, Point d, Point e) {
+
+    public boolean pointInClose(double px, double py,
+                                Point a, Point b, Point c, Point d, Point e) {
+
         double c1 = cross(a.x, a.y, b.x, b.y, px, py);
         double c2 = cross(b.x, b.y, c.x, c.y, px, py);
         double c3 = cross(c.x, c.y, d.x, d.y, px, py);
         double c4 = cross(d.x, d.y, e.x, e.y, px, py);
         double c5 = cross(e.x, e.y, a.x, a.y, px, py);
 
-        return c1 >= 0 && c2 >= 0 && c3 >= 0 && c4 >= 0 && c5 >= 0;
+        return (c1 >= 0 && c2 >= 0 && c3 >= 0 && c4 >= 0 && c5 >= 0) ||
+                (c1 <= 0 && c2 <= 0 && c3 <= 0 && c4 <= 0 && c5 <= 0);
     }
+
 
     public double distanceToSegment(double px, double py, double x1, double y1, double x2, double y2) {
 
@@ -90,25 +104,38 @@ public class Drive extends SubsystemBase {
         return Math.hypot(px - cx, py - cy);
     }
 
-    public boolean isInFar(double px, double py, double r, Point a, Point b, Point c) {
+    public boolean isInFar(double px, double py, double r,
+                           Point a, Point b, Point c) {
 
-        if (!pointInFar(px, py, a, b, c))
-            return false;
-        return distanceToSegment(px, py, a.x, a.y, b.x, b.y) >= r &&
-                distanceToSegment(px, py, b.x, b.y, c.x, c.y) >= r &&
-                distanceToSegment(px, py, c.x, c.y, a.x, a.y) >= r;
+        // Center inside
+        if (pointInFar(px, py, a, b, c))
+            return true;
+
+        // Barely touching edges
+        return distanceToSegment(px, py, a.x, a.y, b.x, b.y) <= r ||
+                distanceToSegment(px, py, b.x, b.y, c.x, c.y) <= r ||
+                distanceToSegment(px, py, c.x, c.y, a.x, a.y) <= r;
     }
 
-    public boolean isInClose(double px, double py, double r, Point a, Point b, Point c, Point d, Point e) {
 
-        if (!pointInClose(px, py, a, b, c, d, e))
-            return false;
-        return distanceToSegment(px, py, a.x, a.y, b.x, b.y) >= r &&
-                distanceToSegment(px, py, b.x, b.y, c.x, c.y) >= r &&
-                distanceToSegment(px, py, c.x, c.y, d.x, d.y) >= r &&
-                distanceToSegment(px, py, d.x, d.y, e.x, e.y) >= r &&
-                distanceToSegment(px, py, e.x, e.y, a.x, a.y) >= r;
+
+    public boolean isInClose(double px, double py, double r,
+                             Point a, Point b, Point c, Point d, Point e) {
+
+        // Center inside
+        if (pointInClose(px, py, a, b, c, d, e))
+            return true;
+
+        // Barely touching edges
+        return distanceToSegment(px, py, a.x, a.y, b.x, b.y) <= r ||
+                distanceToSegment(px, py, b.x, b.y, c.x, c.y) <= r ||
+                distanceToSegment(px, py, c.x, c.y, d.x, d.y) <= r ||
+                distanceToSegment(px, py, d.x, d.y, e.x, e.y) <= r ||
+                distanceToSegment(px, py, e.x, e.y, a.x, a.y) <= r;
     }
+
+
+
 }
 
 class Polygon{

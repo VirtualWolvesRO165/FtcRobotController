@@ -99,8 +99,23 @@ public class Turret extends SubsystemBase {
             angle = 90;
         else{
             if(angle<=360 && angle>=270)
-                angle = 360-angle*2;
+                angle =-(360-angle);
         }
+        int shooterPos = robot.shooterRotation.getCurrentPosition();
+        turretPID.setPID(kp, ki, kd);
+        double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
+
+        robot.shooterRotation.setPower(pid + kf);
+    }
+    public void AutoAutoAim(double targetX, double targetY, double heading , int auto) {
+        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
+        if(angle>=90 && angle<270)
+            angle = 90;
+        else{
+            if(angle<=360 && angle>=270)
+                angle =-(360-angle);
+        }
+        angle += auto;
         int shooterPos = robot.shooterRotation.getCurrentPosition();
         turretPID.setPID(kp, ki, kd);
         double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
