@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.DROPDOWN_ACTIVE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.DROPDOWN_REST_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_CLOSE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.STOPPER_OPEN_POSITION;
@@ -26,7 +30,9 @@ public class Intake extends SubsystemBase {
         private boolean isFullCheck=false;
         public static NormalizedRGBA colors= new NormalizedRGBA();
       public static final float[] hsvValues = new float[3];
-        public enum IntakeState{
+
+
+    public enum IntakeState{
             FORWORD , ///INTAKE
             REVERSE , ///EJECT, not implemented
             STOP ///STOP
@@ -75,13 +81,14 @@ public class Intake extends SubsystemBase {
 
             switch (stopperState){
                 case OPEN:
-//                    if(Math.abs(robot.shooterUp.getVelocity()-SHOOTER_RPM)<50)
+                    if(CAN_SHOOT)
                         robot.stopper.setPosition(STOPPER_OPEN_POSITION);
                     break;
                 case CLOSE:
-//                    if(robot.robotState != Robot.RobotState.SHOOTING)
                         robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
             }
+
+
         }
 
         /// switches the state of intake between STOP and FORWARD
@@ -108,16 +115,12 @@ public class Intake extends SubsystemBase {
         }
 
         public void CheckIntake() {
-            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<12){
-                robot.robotState = Robot.RobotState.POSITIONING;
+            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)<7){
+                IS_FULL=true;
             }
-            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>12 && robot.robotState!= Robot.RobotState.POSITIONING)
-            if(robot.colorSensor instanceof SwitchableLight){
-                ((SwitchableLight)robot.colorSensor).enableLight(true);
-                Color.colorToHSV(colors.toColor(), hsvValues);
-                if(hsvValues[0]>10)
-                    robot.robotState = Robot.RobotState.SEARCHING;
+            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)>7){
+                IS_FULL=false;
             }
         }
-
 }
+

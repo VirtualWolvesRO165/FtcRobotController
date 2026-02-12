@@ -35,7 +35,9 @@ public class Turret extends SubsystemBase {
     public static ShooterAngleState shooterAngleState = ShooterAngleState.STOP;
 
     public PIDController turretPID = new PIDController(0.0035, 0.0, 0.0);
-    public static double kp = 0.0035, ki = 0.0, kd = 0.0, kf = 0.0;
+    public static double kp = 0.0015, ki = 0.0, kd = 0.0, kf = 0.0;
+
+
 
     // ================== UPDATE ==================
     public void Update() {
@@ -94,7 +96,7 @@ public class Turret extends SubsystemBase {
         shooterState = ShooterState.STOP;
     }
     public void AutoAim(double targetX, double targetY, double heading) {
-        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
+        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) - ADDITIONAL_OFFSET_TURRET + OFFSET_TURRET + (START_HEADING - heading);
         if(angle>=90 && angle<270)
             angle = 90;
         else{
@@ -107,6 +109,7 @@ public class Turret extends SubsystemBase {
 
         robot.shooterRotation.setPower(pid + kf);
     }
+
     public void AutoAutoAim(double targetX, double targetY, double heading , int auto) {
         double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
         if(angle>=90 && angle<270)
@@ -119,13 +122,11 @@ public class Turret extends SubsystemBase {
         int shooterPos = robot.shooterRotation.getCurrentPosition();
         turretPID.setPID(kp, ki, kd);
         double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
-
         robot.shooterRotation.setPower(pid + kf);
     }
 
-
     public int CalculateTarget(double angle) {
-        return (int) (450 * angle / 90);
+        return (int) (400 * angle / 90);
     }
     public void UpdateTurret(int target) {
         int shooterPos = robot.shooterRotation.getCurrentPosition();
@@ -135,11 +136,11 @@ public class Turret extends SubsystemBase {
     }
 
     public double FlywheelSpeed(double distance){
-        return  0.00000195431*Math.pow(distance,4)-0.00117607*Math.pow(distance,3)+0.220887*Math.pow(distance,2)-10.86915*distance+1634.25095;
+        return  2374.67338/(1+Math.exp(-(0.00771587*distance-0.244337)));
     }
 
     public double shooterAngle(double distance){
-        return 1.00213/(1+Math.exp(-(0.0792708*distance-6.02534)));
+        return 1.0036/(1+Math.exp(-(0.039279*distance-5.66545)));
     }
 
 }

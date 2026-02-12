@@ -20,12 +20,18 @@ public class Constants {
     /// DRIVE
     public static double ROBOT_X;
     public static double ROBOT_Y;
-    public static double ROBOT_RADIUS=25;
+    public static double ROBOT_RADIUS=8.5;
     public static double ENTRY_MARGIN = 2.0; // inches, tune this
 
     public static Pose START_POSE;
     public static boolean IS_IN_FAR=false;
     public static boolean IS_IN_CLOSE=false;
+    public static boolean IS_BEFORE_IN_FAR=false;
+    public static boolean IS_BEFORE_IN_CLOSE=false;
+    public static boolean IS_IN_PARKING = false;
+    public static boolean IS_FULL=false;
+    public static boolean CAN_SHOOT=false;
+
 
     ///INTAKE
     public static double INTAKE_POWER=-1;
@@ -36,26 +42,21 @@ public class Constants {
 
     /// TURRET
     public static double SHOOTER_RPM =6000;
-    public static double SHOOTER_RPM_OFFSET=-150;
+    public static double SHOOTER_RPM_OFFSET=0;
     public static double SHOOTER_RPM_AUTO=2000;
     public static double ANGLE_AUTO_POSITION=1;
-    public static final double BLUE_BASKET_X=0;
-    public static final double BLUE_BASKET_Y=144;
-    public static final double RED_BASKET_X=144;
-    public static final double RED_BASKET_Y=144;
+    public static double BLUE_BASKET_X=8;
+    public static double BLUE_BASKET_Y=136;
+    public static double RED_BASKET_X=144;
+    public static double RED_BASKET_Y=144;
     public static int OFFSET_TURRET=0;
     public static int ADDITIONAL_OFFSET_TURRET=0;
     public static double ANGLE_POSITION;
-
     public static double START_HEADING;
     public static double HEADING;
-
     public static int TURRET_TARGET=0;
 
     ///UTIL
     public static double NOW;
-
-
-
 
 }

@@ -1,15 +1,24 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_CLOSE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_FAR;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_POSE;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -28,6 +37,7 @@ public class Robot{
     public  DcMotorEx rightFront;
     public DcMotorEx rightBack;
     public Follower follower;
+    public IMU imu;
 
     ///INTAKE
     public DcMotorEx intakeMotor; //power
@@ -35,6 +45,7 @@ public class Robot{
     public Servo dropDownServoRight;
     public Servo stopper;
     public DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensor2;
 
     ///TURRET
     public DcMotorEx shooterUp; //power
@@ -94,6 +105,12 @@ public class Robot{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        imu = hardwareMap.get(IMU.class , "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
 
         ///TURRET
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
@@ -113,7 +130,6 @@ public class Robot{
 
         batteryVoltage = hardwareMap.voltageSensor.iterator().next();
 
-
         ///INTAKE
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
         intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -127,8 +143,8 @@ public class Robot{
         stopper = hardwareMap.get(Servo.class , "stopper");
 
         ///SENSORS
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
         distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
+        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
@@ -179,8 +195,8 @@ public class Robot{
         stopper = hardwareMap.get(Servo.class , "stopper");
 
         ///SENSORS
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
         distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
+        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
@@ -199,19 +215,26 @@ public class Robot{
     }
 
     public void Update(){
-//        switch (robotState){
-//            case SEARCHING:
-//                intake.StartIntake();
-//                break;
-//            case POSITIONING:
-//                intake.StopIntake();
-//                turret.StartShooter();
-//                break;
-//            case SHOOTING:
-//                intake.StartIntake();
-//                intake.OpenStopper();
-//                break;
+//        if(IS_BEFORE_IN_FAR || IS_BEFORE_IN_CLOSE){
+//            turret.StartShooter();
 //        }
+//
+//        if(IS_FULL && !IS_IN_FAR && !IS_IN_CLOSE){
+//            intake.StopIntake();
+//        }
+//
+//        if(!IS_FULL)
+//            intake.StartIntake();
+//
+//        if((IS_IN_CLOSE || IS_IN_FAR) && Math.abs(shooterUp.getVelocity()-SHOOTER_RPM)<50){
+//            CAN_SHOOT=true;
+//            intake.StartIntake();
+//        }
+//        else
+//            CAN_SHOOT=false;
+//
+//        if(!IS_IN_FAR && !IS_BEFORE_IN_FAR && !IS_IN_CLOSE && !IS_BEFORE_IN_CLOSE)
+//            turret.StopShooter();
     }
 
 }

@@ -14,6 +14,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
 import static org.firstinspires.ftc.teamcode.robot.Constants.OFFSET_TURRET;
@@ -23,7 +25,9 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.NOW;
+import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_POSE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
 import static org.firstinspires.ftc.teamcode.subsystem.Intake.stopperState;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -58,7 +62,7 @@ public class TeleOpBlue extends CommandOpMode {
         robot.limelight.pipelineSwitch(1);
         robot.follower = Constants.createFollower(hardwareMap);
         robot.follower.setStartingPose(START_POSE);
-        robot.follower.setHeading(0);
+        robot.follower.setHeading(HEADING);
         START_HEADING = Math.toDegrees(robot.follower.getHeading());
         register(robot.drive); ///nush ce face da trebuie
         /// changes state of intake when Y is pressed
@@ -98,6 +102,9 @@ public class TeleOpBlue extends CommandOpMode {
         driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
             new InstantCommand(()->robot.intake.ToggleIntake())
         );
+        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+                new InstantCommand(()->robot.imu.resetYaw())
+        );
 
         operator.getGamepadButton(GamepadKeys.Button.B).whenHeld(
                 new InstantCommand(()->stopperState = Intake.StopperState.OPEN)
@@ -130,29 +137,35 @@ public class TeleOpBlue extends CommandOpMode {
         if(timer==null)
             timer = new ElapsedTime();
         NOW=getRuntime();
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)));
+        CAN_SHOOT=true;
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))*2.54)+SHOOTER_RPM_OFFSET;
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))*2.54);
         robot.drive.Update(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
         robot.intake.Update(); ///look in subsystem for more info
         robot.turret.Update(); ///look in subsystem for more info
         robot.vision.Update(20);
+        robot.intake.CheckIntake();
         robot.Update();
 //      robot.intake.CheckIntake();
+//        robot.turret.UpdateTurret(TURRET_TARGET);
         robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(robot.follower.getHeading()));
         super.run();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("X" , robot.follower.getPose().getX());
         telemetry.addData("Y" , robot.follower.getPose().getY());
         telemetry.addData("heading" , Math.toDegrees(robot.follower.getHeading()));
+        telemetry.addData("start heading" , START_HEADING);
         telemetry.addData("angle" , robot.shooterAngle.getPosition());
         telemetry.addData("shooterRPM" , SHOOTER_RPM);
         telemetry.addData("limelight offset" , robot.vision.Offset());
         telemetry.addData("aprilTag" , robot.vision.AprilTag());
         telemetry.addData("robotState" , robot.robotState);
         telemetry.addData("distanceSensor" , robot.distanceSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("distanceSensor2" , robot.distanceSensor2.getDistance(DistanceUnit.CM));
         telemetry.addData("isInFar" , IS_IN_FAR);
         telemetry.addData("isInClose" , IS_IN_CLOSE);
         telemetry.addData("intakeState" , robot.intake.intakeState);
+        telemetry.addData("Is Full" , IS_FULL);
         telemetry.update();
         timer.reset();
     }
