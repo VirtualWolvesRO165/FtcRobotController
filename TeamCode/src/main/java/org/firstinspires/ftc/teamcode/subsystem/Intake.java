@@ -26,11 +26,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 @Config
 public class Intake extends SubsystemBase {
         private final Robot robot = Robot.getInstance();
-        private ElapsedTime fullCheckTimer = new ElapsedTime();
-        private boolean isFullCheck=false;
-        public static NormalizedRGBA colors= new NormalizedRGBA();
-      public static final float[] hsvValues = new float[3];
-
 
     public enum IntakeState{
             FORWORD , ///INTAKE
@@ -87,8 +82,6 @@ public class Intake extends SubsystemBase {
                 case CLOSE:
                         robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
             }
-
-
         }
 
         /// switches the state of intake between STOP and FORWARD
@@ -102,11 +95,9 @@ public class Intake extends SubsystemBase {
         public void StartIntake(){
             intakeState = IntakeState.FORWORD;
         }
-
         public void StopIntake(){
             intakeState = IntakeState.STOP;
         }
-
         public void OpenStopper(){
             stopperState=StopperState.OPEN;
         }
@@ -114,13 +105,13 @@ public class Intake extends SubsystemBase {
             stopperState=StopperState.CLOSE;
         }
 
-        public void CheckIntake() {
-            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)<7){
-                IS_FULL=true;
-            }
-            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)>7){
-                IS_FULL=false;
-            }
-        }
+//        public void CheckIntake() {
+//            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)<7){
+//                IS_FULL=true;
+//            }
+//            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)>7){
+//                IS_FULL=false;
+//            }
+//        }
 }
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ADDITIONAL_OFFSET_TURRET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
@@ -35,7 +36,7 @@ public class Turret extends SubsystemBase {
     public static ShooterAngleState shooterAngleState = ShooterAngleState.STOP;
 
     public PIDController turretPID = new PIDController(0.0035, 0.0, 0.0);
-    public static double kp = 0.0015, ki = 0.0, kd = 0.0, kf = 0.0;
+    public static double kp = 0.0025, ki = 0.0, kd = 0.0, kf = 0.0;
 
 
 
@@ -103,13 +104,16 @@ public class Turret extends SubsystemBase {
             if(angle<=360 && angle>=270)
                 angle =-(360-angle);
         }
+        ANGLE=angle;
         int shooterPos = robot.shooterRotation.getCurrentPosition();
         turretPID.setPID(kp, ki, kd);
         double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
 
         robot.shooterRotation.setPower(pid + kf);
     }
-
+    public int CalculateTarget(double angle) {
+        return (int) (356 * angle / 90);
+    }
     public void AutoAutoAim(double targetX, double targetY, double heading , int auto) {
         double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
         if(angle>=90 && angle<270)
@@ -125,9 +129,7 @@ public class Turret extends SubsystemBase {
         robot.shooterRotation.setPower(pid + kf);
     }
 
-    public int CalculateTarget(double angle) {
-        return (int) (400 * angle / 90);
-    }
+
     public void UpdateTurret(int target) {
         int shooterPos = robot.shooterRotation.getCurrentPosition();
         turretPID.setPID(kp, ki, kd);

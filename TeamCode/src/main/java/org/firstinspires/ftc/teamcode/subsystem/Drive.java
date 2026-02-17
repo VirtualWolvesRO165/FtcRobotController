@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_CLOSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_FAR;
@@ -11,6 +14,12 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_PARKING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.alliance;
+import static org.firstinspires.ftc.teamcode.robot.Constants.endGame;
+import static org.firstinspires.ftc.teamcode.robot.Constants.enteredLaunchZone;
+import static org.firstinspires.ftc.teamcode.robot.Constants.findParking;
+import static org.firstinspires.ftc.teamcode.robot.Constants.leavingLaunchZone;
+
+import android.net.wifi.aware.ParcelablePeerHandle;
 
 import org.firstinspires.ftc.teamcode.robot.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -19,6 +28,9 @@ import java.util.List;
 
 public class Drive extends SubsystemBase {
     private final Robot robot = Robot.getInstance();
+    private boolean endGameRumble=false;
+    private boolean parkRumble=false;
+    private boolean launchZoneRumble = false;
 
     private Polygon farZone = new Polygon(List.of(
             new Point(49, 0),
@@ -65,23 +77,27 @@ public class Drive extends SubsystemBase {
     }
 
     public void Update(double p_drive, double strafe, double turn) {
-        double y = p_drive;
-        double x = strafe;
-        double rx = turn;
+//        double y = p_drive;
+//        double x = strafe;
+//        double rx = turn;
+//
+//        double botHeading = robot.follower.getPose().getHeading();
+//        double rotX = x* Math.cos(-botHeading) - y* Math.sin(-botHeading);
+//        double rotY = x* Math.sin(-botHeading) - y* Math.cos(-botHeading);
+//
+//        rotX*=1.1;
+//
+//        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(rx), 1);
+//
+//        robot.leftFront.setPower((rotY + rotX + rx)/denominator);
+//        robot.leftBack.setPower((rotY - rotX + rx)/denominator);
+//        robot.rightFront.setPower((rotY - rotX - rx)/denominator);
+//        robot.rightBack.setPower((rotY + rotX - rx)/denominator);
 
-        double botHeading = robot.follower.getPose().getHeading();
-        double rotX = x* Math.cos(-botHeading) - y* Math.sin(-botHeading);
-        double rotY = x* Math.sin(-botHeading) - y* Math.cos(-botHeading);
-
-        rotX*=1.1;
-
-        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(rx), 1);
-
-        robot.leftFront.setPower((rotY + rotX + rx)/denominator);
-        robot.leftBack.setPower((rotY - rotX + rx)/denominator);
-        robot.rightFront.setPower((rotY - rotX - rx)/denominator);
-        robot.rightBack.setPower((rotY + rotX - rx)/denominator);
-
+        robot.leftFront.setPower(p_drive + strafe + turn);
+        robot.leftBack.setPower(p_drive - strafe + turn);
+        robot.rightFront.setPower(p_drive - strafe - turn);
+        robot.rightBack.setPower(p_drive + strafe - turn);
 
         robot.follower.update();
         ROBOT_X = robot.follower.getPose().getX();
@@ -90,12 +106,41 @@ public class Drive extends SubsystemBase {
         IS_IN_CLOSE = isInClose(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, closeZone.vertices.get(0), closeZone.vertices.get(1), closeZone.vertices.get(2), closeZone.vertices.get(3), closeZone.vertices.get(4));
         IS_BEFORE_IN_FAR = isBeforeInFar(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, beforeFarZone.vertices.get(0), beforeFarZone.vertices.get(1), beforeFarZone.vertices.get(2));
         IS_BEFORE_IN_CLOSE = isBeforeInClose(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, beforeCloseZone.vertices.get(0), beforeCloseZone.vertices.get(1), beforeCloseZone.vertices.get(2), beforeCloseZone.vertices.get(3), beforeCloseZone.vertices.get(4));
-        if(alliance == Constants.Alliance.BLUE)
-            IS_IN_PARKING = isInBlueParking(ROBOT_X, ROBOT_Y, ROBOT_RADIUS , blueParkingZone.vertices.get(0) , blueParkingZone.vertices.get(1) , blueParkingZone.vertices.get(2) , blueParkingZone.vertices.get(3));
+        if (alliance == Constants.Alliance.BLUE)
+            IS_IN_PARKING = isInBlueParking(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, blueParkingZone.vertices.get(0), blueParkingZone.vertices.get(1), blueParkingZone.vertices.get(2), blueParkingZone.vertices.get(3));
         else
-            IS_IN_PARKING = isInRedParking(ROBOT_X, ROBOT_Y, ROBOT_RADIUS , redParkingZone.vertices.get(0) , redParkingZone.vertices.get(1) , redParkingZone.vertices.get(2) , redParkingZone.vertices.get(3));
+            IS_IN_PARKING = isInRedParking(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, redParkingZone.vertices.get(0), redParkingZone.vertices.get(1), redParkingZone.vertices.get(2), redParkingZone.vertices.get(3));
 
-
+//        if (runTime.seconds() >= 140 && !endGameRumble) {
+//            driver.runRumbleEffect(endGame);
+//            operator.runRumbleEffect(endGame);
+//            endGameRumble = true;
+//        }
+//        if (runTime.seconds() >= 150 && !parkRumble) {
+//            driver.runRumbleEffect(findParking);
+//            parkRumble = true;
+//        }
+//        if (IS_IN_CLOSE && !launchZoneRumble) {
+//            driver.runRumbleEffect(enteredLaunchZone);
+//            operator.runRumbleEffect(enteredLaunchZone);
+//            launchZoneRumble=true;
+//        }
+//        if(!IS_IN_CLOSE && launchZoneRumble) {
+//            driver.runRumbleEffect(leavingLaunchZone);
+//            operator.runRumbleEffect(leavingLaunchZone);
+//            launchZoneRumble=false;
+//
+//        }
+//        if (IS_IN_FAR && !launchZoneRumble) {
+//            driver.runRumbleEffect(enteredLaunchZone);
+//            operator.runRumbleEffect(enteredLaunchZone);
+//            launchZoneRumble=true;
+//        }
+//        if(!IS_IN_FAR && launchZoneRumble) {
+//            driver.runRumbleEffect(leavingLaunchZone);
+//            operator.runRumbleEffect(leavingLaunchZone);
+//            launchZoneRumble=false;
+//        }
     }
     public double cross(double ax, double ay, double bx, double by, double px, double py) {
         return (bx - ax) * (py - ay) - (by - ay) * (px - ax);

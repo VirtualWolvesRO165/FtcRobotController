@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -28,7 +33,7 @@ public class RedClose9Bile extends OpMode {
     private int pathState;
     private double startHeading;
 
-    public Pose startPose = new Pose(116, 128);
+    public Pose startPose = new Pose(119.4, 124.8);
 
     public PathChain Path1;
     public PathChain Path2;
@@ -41,7 +46,7 @@ public class RedClose9Bile extends OpMode {
     public void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(116.000, 128.000),
+                                new Pose(119.000, 124.40),
 
                                 new Pose(84.000, 84.000)
                         )
@@ -96,25 +101,21 @@ public class RedClose9Bile extends OpMode {
                                 new Pose(84.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(0))
-
                 .build();
-
-
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(84, 84.000),
+                                new Pose(127.000, 60.000),
 
-                                new Pose(122.000, 84.000)
+                                new Pose(112.100, 88.700)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(0))
-
                 .build();
     }
 
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                SHOOTER_RPM_OFFSET+=200;
+                robot.turret.StartShooter();
                 robot.intake.StartIntake();
                 robot.intake.CloseStopper();
                 follower.followPath(Path1 , true);
@@ -132,11 +133,9 @@ public class RedClose9Bile extends OpMode {
                         }
                     }
                 }
-
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    SHOOTER_RPM_OFFSET+=1000;
                     robot.intake.StartIntake();
                     follower.followPath(Path2 ,.6 ,  true);
                     setPathState(3);
@@ -144,8 +143,11 @@ public class RedClose9Bile extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
+
+                    robot.turret.StartShooter();
                     follower.followPath(Path3 , true);
                     setPathState(4);
+
                 }
                 break;
             case 4:
@@ -206,14 +208,15 @@ public class RedClose9Bile extends OpMode {
     public void loop() {
 
         // These loop the movements of the robot, these must be called continuously in order to work
+        CAN_SHOOT=true;
         follower.update();
         autonomousPathUpdate();
         robot.intake.Update();
+        robot.turret.Update();
         robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        robot.shooterAngle.setPosition(robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))));
-        robot.shooterUp.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))));
-        robot.shooterDown.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))));
-        robot.vision.Update(24);
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))*2.54);
+        robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
         HEADING = Math.toDegrees(follower.getHeading());
@@ -222,7 +225,9 @@ public class RedClose9Bile extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", HEADING);
-        telemetry.addData("rpm" , robot.shooterUp.getVelocity());
+        telemetry.addData("shooterRPM", SHOOTER_RPM);
+        telemetry.addData("angle", ANGLE_POSITION);
+        telemetry.addData("turret angle", ANGLE);
         telemetry.update();
     }
 
@@ -263,5 +268,9 @@ public class RedClose9Bile extends OpMode {
      * We do not use this because everything should automatically disable
      **/
     public void stop() {
+        ROBOT_X=112.1;
+        ROBOT_Y=88.7;
+        HEADING=0;
+        START_HEADING=0;
     }
 }

@@ -142,9 +142,9 @@ public class Robot{
 
         stopper = hardwareMap.get(Servo.class , "stopper");
 
-        ///SENSORS
-        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
-        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
+//        ///SENSORS
+//        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
+//        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
@@ -195,8 +195,8 @@ public class Robot{
         stopper = hardwareMap.get(Servo.class , "stopper");
 
         ///SENSORS
-        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
-        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
+//        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
+//        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
@@ -236,5 +236,6 @@ public class Robot{
 //        if(!IS_IN_FAR && !IS_BEFORE_IN_FAR && !IS_IN_CLOSE && !IS_BEFORE_IN_CLOSE)
 //            turret.StopShooter();
     }
+
 
 }

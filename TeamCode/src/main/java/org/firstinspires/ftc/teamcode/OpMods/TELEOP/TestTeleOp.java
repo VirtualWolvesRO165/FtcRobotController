@@ -29,7 +29,7 @@ public class TestTeleOp extends CommandOpMode {
         register(robot.drive); ///nush ce face da trebuie
 
         driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new InstantCommand(()->robot.intakeMotor.setPower(-INTAKE_POWER))
+                new InstantCommand(()->robot.intakeMotor.setPower(INTAKE_POWER))
         );
         driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new InstantCommand(()->robot.intakeMotor.setPower(0))
@@ -40,8 +40,6 @@ public class TestTeleOp extends CommandOpMode {
         driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new InstantCommand(()->robot.stopper.setPosition(1))
         );
-
-
         super.run();
     }
 
