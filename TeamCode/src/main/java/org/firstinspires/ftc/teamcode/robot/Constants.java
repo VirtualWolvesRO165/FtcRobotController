@@ -55,6 +55,9 @@ public class Constants {
     public static double ANGLE_POSITION;
     public static int TURRET_TARGET=0;
     public static boolean ENABLE_AUTO_AIM=true;
+    public static final double TURRET_ENCOUDER_TICKS=356;
+    public static double TURRET_OFFSET_Y=4;
+    public static double TURRET_OFFSET_X=0;
 
     ///UTIL
     public static double NOW;

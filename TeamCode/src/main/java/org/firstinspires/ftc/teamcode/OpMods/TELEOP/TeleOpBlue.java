@@ -14,6 +14,7 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
@@ -155,7 +156,7 @@ public class TeleOpBlue extends CommandOpMode {
             timer = new ElapsedTime();
         NOW=getRuntime();
         CAN_SHOOT=true;
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))*2.54)+SHOOTER_RPM_OFFSET;
         ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2))*2.54);
         robot.drive.Update(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
         robot.intake.Update(); ///look in subsystem for more info
@@ -173,6 +174,7 @@ public class TeleOpBlue extends CommandOpMode {
         telemetry.addData("Y" , robot.follower.getPose().getY());
         telemetry.addData("heading" , Math.toDegrees(robot.follower.getHeading()));
         telemetry.addData("start heading" , START_HEADING);
+        telemetry.addData("difference heading" , START_HEADING-Math.toDegrees(robot.follower.getHeading()));
         telemetry.addData("angle" , robot.shooterAngle.getPosition());
         telemetry.addData("shooterRPM" , SHOOTER_RPM);
         telemetry.addData("limelight offset" , robot.vision.Offset());
@@ -184,6 +186,7 @@ public class TeleOpBlue extends CommandOpMode {
         telemetry.addData("isInClose" , IS_IN_CLOSE);
         telemetry.addData("intakeState" , robot.intake.intakeState);
         telemetry.addData("Is Full" , IS_FULL);
+        telemetry.addData("TURRET ANGLE" , ANGLE);
         telemetry.update();
         timer.reset();
     }

@@ -164,7 +164,7 @@ public class RedFar6bile extends OpMode {
         follower.update();
         autonomousPathUpdate();
         robot.intake.Update();
-        robot.turret.AutoAutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()) , autoOffset);
+//        robot.turret.AutoAutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()) , autoOffset);
         robot.shooterAngle.setPosition(robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))));
         robot.shooterUp.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET);
         robot.shooterDown.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET);

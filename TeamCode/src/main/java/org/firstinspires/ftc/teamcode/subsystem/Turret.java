@@ -10,6 +10,10 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_ENCOUDER_TICKS;
+import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_OFFSET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_OFFSET_Y;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.controller.PIDController;
@@ -36,7 +40,7 @@ public class Turret extends SubsystemBase {
     public static ShooterAngleState shooterAngleState = ShooterAngleState.STOP;
 
     public PIDController turretPID = new PIDController(0.0035, 0.0, 0.0);
-    public static double kp = 0.0025, ki = 0.0, kd = 0.0, kf = 0.0;
+    public static double kp = 0.0035, ki = 0.0, kd = 0.0, kf = 0.0;
 
 
 
@@ -97,11 +101,11 @@ public class Turret extends SubsystemBase {
         shooterState = ShooterState.STOP;
     }
     public void AutoAim(double targetX, double targetY, double heading) {
-        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) - ADDITIONAL_OFFSET_TURRET + OFFSET_TURRET + (START_HEADING - heading);
-        if(angle>=90 && angle<270)
+        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) - ADDITIONAL_OFFSET_TURRET + OFFSET_TURRET +(START_HEADING-heading);
+        if(angle>90 && angle<270)
             angle = 90;
         else{
-            if(angle<=360 && angle>=270)
+            if(angle<360 && angle>270)
                 angle =-(360-angle);
         }
         ANGLE=angle;
@@ -112,22 +116,23 @@ public class Turret extends SubsystemBase {
         robot.shooterRotation.setPower(pid + kf);
     }
     public int CalculateTarget(double angle) {
-        return (int) (356 * angle / 90);
+        return (int) (TURRET_ENCOUDER_TICKS * angle / 90);
     }
-    public void AutoAutoAim(double targetX, double targetY, double heading , int auto) {
-        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
-        if(angle>=90 && angle<270)
-            angle = 90;
-        else{
-            if(angle<=360 && angle>=270)
-                angle =-(360-angle);
-        }
-        angle += auto;
-        int shooterPos = robot.shooterRotation.getCurrentPosition();
-        turretPID.setPID(kp, ki, kd);
-        double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
-        robot.shooterRotation.setPower(pid + kf);
-    }
+
+//    public void AutoAutoAim(double targetX, double targetY, double heading , int auto) {
+//        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
+//        if(angle>=90 && angle<270)
+//            angle = 90;
+//        else{
+//            if(angle<=360 && angle>=270)
+//                angle =-(360-angle);
+//        }
+//        angle += auto;
+//        int shooterPos = robot.shooterRotation.getCurrentPosition();
+//        turretPID.setPID(kp, ki, kd);
+//        double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
+//        robot.shooterRotation.setPower(pid + kf);
+//    }
 
 
     public void UpdateTurret(int target) {
@@ -138,11 +143,11 @@ public class Turret extends SubsystemBase {
     }
 
     public double FlywheelSpeed(double distance){
-        return  2374.67338/(1+Math.exp(-(0.00771587*distance-0.244337)));
+        return  3.59448*distance+1098.96682;
     }
 
     public double shooterAngle(double distance){
-        return 1.0036/(1+Math.exp(-(0.039279*distance-5.66545)));
+        return 5.26938*Math.pow(10,-9)*Math.pow(distance,4)+0.00000350072*Math.pow(distance,3)-0.000833057*Math.pow(distance,2)+0.0901116*distance-3.53654;
     }
 
 }
