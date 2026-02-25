@@ -45,8 +45,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 
 import java.util.function.Supplier;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TELEOPBLUE")
-public class TeleOpBlue extends CommandOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TELEOPBLUESOLO")
+public class TeleOpBlueSolo extends CommandOpMode {
 
     private Robot robot = Robot.getInstance();
     private GamepadEx driver;
@@ -116,46 +116,46 @@ public class TeleOpBlue extends CommandOpMode {
 //        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(
 //                new InstantCommand(()->shooterAngleState = Turret.ShooterAngleState.STOP)
 //        );
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-            new InstantCommand(()->robot.turret.ToggleShooter())
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                new InstantCommand(()->robot.turret.ToggleShooter())
         );
 //        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
 //            new InstantCommand(()->robot.robotState = Robot.RobotState.POSITIONING)
 //        );
         driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-            new InstantCommand(()->robot.intake.ToggleIntake())
+                new InstantCommand(()->robot.intake.ToggleIntake())
         );
-        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-                new InstantCommand(()->robot.imu.resetYaw())
-        );
+//        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+//                new InstantCommand(()->robot.imu.resetYaw())
+//        );
 
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
-                new FollowPathCommand(robot.follower , goToPark, true , 0.3)
-        );
+//        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+//                new FollowPathCommand(robot.follower , goToPark, true , 0.3)
+//        );
 
-        operator.getGamepadButton(GamepadKeys.Button.B).whenHeld(
+        driver.getGamepadButton(GamepadKeys.Button.B).whenHeld(
                 new InstantCommand(()->stopperState = Intake.StopperState.OPEN)
         );
-        operator.getGamepadButton(GamepadKeys.Button.B).whenReleased(
+        driver.getGamepadButton(GamepadKeys.Button.B).whenReleased(
                 new InstantCommand(()->stopperState = Intake.StopperState.CLOSE)
         );
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                 new InstantCommand(()->OFFSET_TURRET+=5)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
                 new InstantCommand(()->OFFSET_TURRET-=5)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new InstantCommand(()->SHOOTER_RPM_OFFSET+=100)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new InstantCommand(()->SHOOTER_RPM_OFFSET-=100)
         );
-        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                 new InstantCommand(()->OFFSET_TURRET=0)
         );
-        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new InstantCommand(()->ENABLE_AUTO_AIM=!ENABLE_AUTO_AIM)
         );
         super.run();

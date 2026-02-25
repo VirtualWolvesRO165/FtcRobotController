@@ -40,7 +40,7 @@ public class Turret extends SubsystemBase {
     public static ShooterAngleState shooterAngleState = ShooterAngleState.STOP;
 
     public PIDController turretPID = new PIDController(0.0035, 0.0, 0.0);
-    public static double kp = 0.0035, ki = 0.0, kd = 0.0, kf = 0.0;
+    public static double kp = 0.0045, ki = 0.0, kd = 0.0, kf = 0.0;
 
 
 

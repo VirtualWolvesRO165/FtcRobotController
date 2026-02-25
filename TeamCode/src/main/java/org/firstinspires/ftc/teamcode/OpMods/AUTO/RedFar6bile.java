@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.OFFSET_TURRET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -36,6 +40,7 @@ public class RedFar6bile extends OpMode {
     public Pose startPose = new Pose(88,8);
 
     public PathChain Path1;
+
     public PathChain Path2;
     public PathChain Path3;
     public PathChain Path4;
@@ -84,13 +89,13 @@ public class RedFar6bile extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                SHOOTER_RPM_OFFSET+=shooterOffset;
+                SHOOTER_RPM_OFFSET=350;
                 robot.intake.StartIntake();
                 robot.intake.CloseStopper();
                 robot.turret.StartShooter();
-                if(pathTimer.getElapsedTimeSeconds()>3){
+                if(pathTimer.getElapsedTimeSeconds()>5){
                     robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>5){
+                    if(pathTimer.getElapsedTimeSeconds()>6.5){
                         robot.intake.CloseStopper();
                         follower.followPath(Path1 , true);
                         setPathState(1);
@@ -114,9 +119,17 @@ public class RedFar6bile extends OpMode {
                 }
                 break;
             case 3:
-                if(!follower.isBusy()) {
-                    follower.followPath(Path2, .6, true);
-                    setPathState(4);
+                if(!follower.isBusy()) {robot.intake.StartIntake();
+                    robot.intake.CloseStopper();
+                    robot.turret.StartShooter();
+                    if(pathTimer.getElapsedTimeSeconds()>3){
+                        robot.intake.OpenStopper();
+                        if(pathTimer.getElapsedTimeSeconds()>5){
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path2 , true);
+                            setPathState(4);
+                        }
+                    }
                 }
                 break;
             case 4:
@@ -134,7 +147,7 @@ public class RedFar6bile extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds()>6){
                         robot.intake.CloseStopper();
                         follower.followPath(Path4 , true);
-                        SHOOTER_RPM_OFFSET-=shooterOffset;
+                        SHOOTER_RPM_OFFSET=0;
                         setPathState(6);
                     }
                 }
@@ -161,23 +174,30 @@ public class RedFar6bile extends OpMode {
     public void loop() {
 
         // These loop the movements of the robot, these must be called continuously in order to work
+        CAN_SHOOT=true;
         follower.update();
         autonomousPathUpdate();
         robot.intake.Update();
-//        robot.turret.AutoAutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()) , autoOffset);
-        robot.shooterAngle.setPosition(robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))));
-        robot.shooterUp.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET);
-        robot.shooterDown.setVelocity(robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET);
-        robot.vision.Update(24);
+        robot.turret.Update();
+        robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()));
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)));
+        robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
         HEADING = Math.toDegrees(follower.getHeading());
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
+        telemetry.addData("pathTimer", pathTimer.getElapsedTimeSeconds());
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", HEADING);
+        telemetry.addData("shooterRPM", SHOOTER_RPM);
+        telemetry.addData("angle", ANGLE_POSITION);
+        telemetry.addData("turret angle", ANGLE);
+
         telemetry.update();
+
     }
 
     /**
@@ -217,5 +237,8 @@ public class RedFar6bile extends OpMode {
      * We do not use this because everything should automatically disable
      **/
     public void stop() {
+        ROBOT_X=106;
+        ROBOT_Y=13;
+        HEADING=0;
     }
 }

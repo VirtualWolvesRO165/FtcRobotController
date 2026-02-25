@@ -77,6 +77,7 @@ public class Drive extends SubsystemBase {
     }
 
     public void Update(double p_drive, double strafe, double turn) {
+        turn/=2;
 //        double y = p_drive;
 //        double x = strafe;
 //        double rx = turn;

@@ -34,6 +34,7 @@ public class Vision extends SubsystemBase {
         if(pythonOutputs!=null)
             return pythonOutputs[2];
         return 69;
+        /// daca citesti asta sugi pula
     }
     public void GoalOffsetCalculator(int id) {
         pythonOutputs = robot.limelight.getLatestResult().getPythonOutput();

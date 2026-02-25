@@ -14,10 +14,11 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ENABLE_AUTO_AIM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ENABLE_AUTO_AIM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
@@ -33,6 +34,7 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_POSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.bluePoseToHuman1;
 import static org.firstinspires.ftc.teamcode.robot.Constants.bluePoseToHuman2;
+import static org.firstinspires.ftc.teamcode.robot.Constants.parkblue;
 import static org.firstinspires.ftc.teamcode.subsystem.Intake.stopperState;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -40,7 +42,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 
-import java.util.EmptyStackException;
 import java.util.function.Supplier;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TELEOPRED")
@@ -51,6 +52,7 @@ public class TeleOpRed extends CommandOpMode {
     private GamepadEx operator;
     private ElapsedTime timer;
     PathChain goToHuman;
+    PathChain goToPark;
 
     @Override
     public void initialize(){
@@ -68,12 +70,16 @@ public class TeleOpRed extends CommandOpMode {
         robot.follower.setHeading(HEADING);
         START_HEADING = Math.toDegrees(robot.follower.getHeading());
 
-//        goToHuman = robot.follower.pathBuilder()
-//                .addPath(new BezierLine(robot.follower.getPose() , bluePoseToHuman1))
-//                .setLinearHeadingInterpolation(robot.follower.getHeading() , 0)
-//                .addPath(new BezierLine(robot.follower.getPose() , bluePoseToHuman2))
-//                .setLinearHeadingInterpolation(robot.follower.getHeading() , 0)
-//                .build();
+        goToHuman = robot.follower.pathBuilder()
+                .addPath(new BezierLine(robot.follower.getPose() , bluePoseToHuman1))
+                .setLinearHeadingInterpolation(robot.follower.getHeading() , 0)
+                .addPath(new BezierLine(robot.follower.getPose() , bluePoseToHuman2))
+                .setLinearHeadingInterpolation(robot.follower.getHeading() , 0)
+                .build();
+        goToPark = robot.follower.pathBuilder()
+                .addPath(new BezierLine(robot.follower.getPose() , parkblue))
+                .setLinearHeadingInterpolation(robot.follower.getHeading() , 0)
+                .build();
 
         register(robot.drive); ///nush ce face da trebuie
         /// changes state of intake when Y is pressed
@@ -117,9 +123,9 @@ public class TeleOpRed extends CommandOpMode {
                 new InstantCommand(()->robot.imu.resetYaw())
         );
 
-//        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
-//                new FollowPathCommand(robot.follower , goToHuman)
-//        );
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+                new FollowPathCommand(robot.follower , goToPark, true , 0.3)
+        );
 
         operator.getGamepadButton(GamepadKeys.Button.B).whenHeld(
                 new InstantCommand(()->stopperState = Intake.StopperState.OPEN)
@@ -157,7 +163,7 @@ public class TeleOpRed extends CommandOpMode {
         NOW=getRuntime();
         CAN_SHOOT=true;
         SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2))*2.54);
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)));
         robot.drive.Update(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
         robot.intake.Update(); ///look in subsystem for more info
         robot.turret.Update(); ///look in subsystem for more info
@@ -174,6 +180,7 @@ public class TeleOpRed extends CommandOpMode {
         telemetry.addData("Y" , robot.follower.getPose().getY());
         telemetry.addData("heading" , Math.toDegrees(robot.follower.getHeading()));
         telemetry.addData("start heading" , START_HEADING);
+        telemetry.addData("difference heading" , START_HEADING-Math.toDegrees(robot.follower.getHeading()));
         telemetry.addData("angle" , robot.shooterAngle.getPosition());
         telemetry.addData("shooterRPM" , SHOOTER_RPM);
         telemetry.addData("limelight offset" , robot.vision.Offset());
@@ -185,6 +192,7 @@ public class TeleOpRed extends CommandOpMode {
         telemetry.addData("isInClose" , IS_IN_CLOSE);
         telemetry.addData("intakeState" , robot.intake.intakeState);
         telemetry.addData("Is Full" , IS_FULL);
+        telemetry.addData("TURRET ANGLE" , ANGLE);
         telemetry.update();
         timer.reset();
     }

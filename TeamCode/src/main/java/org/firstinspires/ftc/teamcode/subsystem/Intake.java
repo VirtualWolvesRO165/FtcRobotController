@@ -26,6 +26,9 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 @Config
 public class Intake extends SubsystemBase {
         private final Robot robot = Robot.getInstance();
+        public static float[] hsvValues1 = new float[3];
+        public static float[] hsvValues2 = new float[3];
+        private boolean fullcheck=false;
 
     public enum IntakeState{
             FORWORD , ///INTAKE
@@ -82,6 +85,11 @@ public class Intake extends SubsystemBase {
                 case CLOSE:
                         robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
             }
+            ColorSensors();
+            if(IS_FULL && fullcheck){
+                StartIntake();
+                fullcheck=false;
+            }
         }
 
         /// switches the state of intake between STOP and FORWARD
@@ -90,6 +98,21 @@ public class Intake extends SubsystemBase {
                 intakeState = IntakeState.FORWORD;
             else
                 intakeState = IntakeState.STOP;
+        }
+
+        public void ColorSensors() {
+//            NormalizedRGBA colors1 = robot.colorSensor.getNormalizedColors();
+//            NormalizedRGBA colors2 = robot.colorSensor2.getNormalizedColors();
+//            Color.colorToHSV(colors1.toColor(), hsvValues1);
+//            Color.colorToHSV(colors2.toColor(), hsvValues2);
+//            if (hsvValues1[0] != 0 && hsvValues2[0] != 0) {
+//                IS_FULL = true;
+//                fullcheck=true;
+//            }
+//            else {
+//                IS_FULL = false;
+//                fullcheck=false;
+//            }
         }
 
         public void StartIntake(){
@@ -104,6 +127,7 @@ public class Intake extends SubsystemBase {
         public void CloseStopper(){
             stopperState=StopperState.CLOSE;
         }
+    }
 
 //        public void CheckIntake() {
 //            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)<7){
@@ -113,5 +137,3 @@ public class Intake extends SubsystemBase {
 //                IS_FULL=false;
 //            }
 //        }
-}
-

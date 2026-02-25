@@ -48,14 +48,14 @@ public class Constants {
 
     /// TURRET
     public static double SHOOTER_RPM =6000;
-    public static double SHOOTER_RPM_OFFSET=200;
+    public static double SHOOTER_RPM_OFFSET=0;
     public static double ANGLE_AUTO_POSITION=1;
     public static int OFFSET_TURRET=0;
     public static int ADDITIONAL_OFFSET_TURRET=0;
     public static double ANGLE_POSITION;
     public static int TURRET_TARGET=0;
     public static boolean ENABLE_AUTO_AIM=true;
-    public static final double TURRET_ENCOUDER_TICKS=356;
+    public static final double TURRET_ENCOUDER_TICKS=403;
     public static double TURRET_OFFSET_Y=4;
     public static double TURRET_OFFSET_X=0;
 
@@ -91,5 +91,6 @@ public class Constants {
 
     public static Pose bluePoseToHuman1 = new Pose(111,12);
     public static Pose bluePoseToHuman2 = new Pose(132,12);
+    public static Pose parkblue = new Pose(105,33.5);
 
 }

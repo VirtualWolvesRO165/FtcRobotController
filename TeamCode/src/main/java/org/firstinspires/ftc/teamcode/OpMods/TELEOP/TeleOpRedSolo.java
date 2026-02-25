@@ -7,7 +7,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -17,8 +16,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ENABLE_AUTO_AIM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
@@ -45,8 +44,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 
 import java.util.function.Supplier;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TELEOPBLUE")
-public class TeleOpBlue extends CommandOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TELEOPREDSOLO")
+public class TeleOpRedSolo extends CommandOpMode {
 
     private Robot robot = Robot.getInstance();
     private GamepadEx driver;
@@ -81,12 +80,7 @@ public class TeleOpBlue extends CommandOpMode {
                 .addPath(new BezierLine(robot.follower.getPose() , parkblue))
                 .setLinearHeadingInterpolation(robot.follower.getHeading() , 0)
                 .build();
-        if(robot.colorSensor instanceof SwitchableLight){
-            ((SwitchableLight)robot.colorSensor).enableLight(true);
-        }
-        if(robot.colorSensor2 instanceof SwitchableLight){
-            ((SwitchableLight)robot.colorSensor2).enableLight(true);
-        }
+
         register(robot.drive); ///nush ce face da trebuie
         /// changes state of intake when Y is pressed
 //        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
@@ -116,46 +110,46 @@ public class TeleOpBlue extends CommandOpMode {
 //        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(
 //                new InstantCommand(()->shooterAngleState = Turret.ShooterAngleState.STOP)
 //        );
-        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-            new InstantCommand(()->robot.turret.ToggleShooter())
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                new InstantCommand(()->robot.turret.ToggleShooter())
         );
 //        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
 //            new InstantCommand(()->robot.robotState = Robot.RobotState.POSITIONING)
 //        );
         driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-            new InstantCommand(()->robot.intake.ToggleIntake())
+                new InstantCommand(()->robot.intake.ToggleIntake())
         );
-        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-                new InstantCommand(()->robot.imu.resetYaw())
-        );
+//        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+//                new InstantCommand(()->robot.imu.resetYaw())
+//        );
+//
+//        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+//                new FollowPathCommand(robot.follower , goToPark, true , 0.3)
+//        );
 
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
-                new FollowPathCommand(robot.follower , goToPark, true , 0.3)
-        );
-
-        operator.getGamepadButton(GamepadKeys.Button.B).whenHeld(
+        driver.getGamepadButton(GamepadKeys.Button.B).whenHeld(
                 new InstantCommand(()->stopperState = Intake.StopperState.OPEN)
         );
-        operator.getGamepadButton(GamepadKeys.Button.B).whenReleased(
+        driver.getGamepadButton(GamepadKeys.Button.B).whenReleased(
                 new InstantCommand(()->stopperState = Intake.StopperState.CLOSE)
         );
 
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                 new InstantCommand(()->OFFSET_TURRET+=5)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
                 new InstantCommand(()->OFFSET_TURRET-=5)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new InstantCommand(()->SHOOTER_RPM_OFFSET+=100)
         );
-        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new InstantCommand(()->SHOOTER_RPM_OFFSET-=100)
         );
-        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                 new InstantCommand(()->OFFSET_TURRET=0)
         );
-        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new InstantCommand(()->ENABLE_AUTO_AIM=!ENABLE_AUTO_AIM)
         );
         super.run();
@@ -168,8 +162,8 @@ public class TeleOpBlue extends CommandOpMode {
             timer = new ElapsedTime();
         NOW=getRuntime();
         CAN_SHOOT=true;
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)));
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)));
         robot.drive.Update(driver.getLeftY(),driver.getLeftX(),driver.getRightX());
         robot.intake.Update(); ///look in subsystem for more info
         robot.turret.Update(); ///look in subsystem for more info
@@ -179,7 +173,7 @@ public class TeleOpBlue extends CommandOpMode {
 //      robot.intake.CheckIntake();
 //        robot.turret.UpdateTurret(TURRET_TARGET);
         if(ENABLE_AUTO_AIM)
-            robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(robot.follower.getHeading()));
+            robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(robot.follower.getHeading()));
         super.run();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("X" , robot.follower.getPose().getX());

@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
@@ -31,14 +31,15 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RedFar3Bile")
-public class BlueFar6bile extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueFarHuman")
+public class BlueFarHuman extends OpMode {
 
     private Robot robot = Robot.getInstance();
-    private Follower follower;    private Timer pathTimer, actionTimer, opmodeTimer;
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    public Pose startPose = new Pose(88, 8);
+    public Pose startPose = new Pose(56, 8);
 
     public PathChain Path0;
     public PathChain Path1;
@@ -52,20 +53,60 @@ public class BlueFar6bile extends OpMode {
     public void buildPaths() {
         Path0 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88,8),
-                                new Pose(88,14)
+                                new Pose(56,8),
+                                new Pose(56,14)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0) , Math.toRadians(90))
 
                 .build();
 
+        Path1 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(56.000, 9.000),
+
+                                new Pose(11.000, 9.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(90) , Math.toRadians(180))
+
+                .build();
+
+        Path2 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(11.000, 9.000),
+
+                                new Pose(60.000, 14.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path3 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(60.000, 14.000),
+
+                                new Pose(11.000, 16.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path4 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(11.000, 16.000),
+
+                                new Pose(60.000, 14.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88.000, 14.000),
+                                new Pose(60.000, 14.000),
 
-                                new Pose(109.000, 9.000)
+                                new Pose(35.000, 9.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
 
                 .build();
     }
@@ -81,18 +122,85 @@ public class BlueFar6bile extends OpMode {
                 break;
             case 1:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>4)
-                    {
+                if(pathTimer.getElapsedTimeSeconds()>4)
+                {
+                    robot.intake.OpenStopper();
+                    if(pathTimer.getElapsedTimeSeconds()>6){
+                        robot.intake.CloseStopper();
+                        follower.followPath(Path1 , true);
+                        setPathState(2);
+                    }
+                }
+            }
+                break;
+            case 2:
+                if (!follower.isBusy()) {
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                if(pathTimer.getElapsedTimeSeconds()>1){
+                    follower.followPath(Path2,true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if(!follower.isBusy()) {
+                    if (pathTimer.getElapsedTimeSeconds() > 2) {
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>6){
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
                             robot.intake.CloseStopper();
-                            follower.followPath(Path5 , true);
-                            setPathState(2);
+                            follower.followPath(Path3, true);
+                            setPathState(5);
                         }
                     }
                 }
                 break;
-            case 2:
+            case 5:
+                if(!follower.isBusy())
+                    setPathState(6);
+                break;
+            case 6:
+                if(pathTimer.getElapsedTimeSeconds()>1){
+                    follower.followPath(Path4);
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                if(!follower.isBusy()) {
+                    if (pathTimer.getElapsedTimeSeconds() > 2) {
+                        robot.intake.OpenStopper();
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path3, true);
+                            setPathState(8);
+                        }
+                    }
+                }
+                break;
+            case 8:
+                if(!follower.isBusy())
+                    setPathState(9);
+                break;
+            case 9:
+                if(pathTimer.getElapsedTimeSeconds()>1){
+                    follower.followPath(Path4);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if(!follower.isBusy()) {
+                    if (pathTimer.getElapsedTimeSeconds() > 2) {
+                        robot.intake.OpenStopper();
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path5, true);
+                            setPathState(11);
+                        }
+                    }
+                }
+                break;
+            case 11:
                 if(!follower.isBusy())
                     setPathState(-1);
                 break;
@@ -118,9 +226,9 @@ public class BlueFar6bile extends OpMode {
         autonomousPathUpdate();
         robot.intake.Update();
         robot.turret.Update();
-        robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)));
+        robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(follower.getHeading()));
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)));
         robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
@@ -161,7 +269,7 @@ public class BlueFar6bile extends OpMode {
     public void init_loop() {
     }
 
-    /**]\ t
+    /**
      * This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system
      **/
@@ -174,7 +282,7 @@ public class BlueFar6bile extends OpMode {
      * We do not use this because everything should automatically disable
      **/
     public void stop() {
-        ROBOT_X=109;
+        ROBOT_X=35;
         ROBOT_Y=9;
         HEADING=0;
         SHOOTER_RPM_OFFSET=0;

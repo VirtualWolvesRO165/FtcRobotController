@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
-import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_CLOSE;
-import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_FAR;
-import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
-import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
-import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
-import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
-import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
-import static org.firstinspires.ftc.teamcode.robot.Constants.START_POSE;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -44,8 +36,9 @@ public class Robot{
     public Servo dropDownServoLeft;
     public Servo dropDownServoRight;
     public Servo stopper;
-    public DistanceSensor distanceSensor;
-    public DistanceSensor distanceSensor2;
+
+    public NormalizedColorSensor colorSensor;
+    public NormalizedColorSensor colorSensor2;
 
     ///TURRET
     public DcMotorEx shooterUp; //power
@@ -54,7 +47,6 @@ public class Robot{
     public DcMotorEx shooterRotation; //range
 
     ///AUX
-    public NormalizedColorSensor colorSensor;
     public VoltageSensor batteryVoltage;
 
 
@@ -142,9 +134,9 @@ public class Robot{
 
         stopper = hardwareMap.get(Servo.class , "stopper");
 
-//        ///SENSORS
-//        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
-//        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
+        ///SENSORS
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
+        colorSensor2 = hardwareMap.get(NormalizedColorSensor.class , "colorSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");

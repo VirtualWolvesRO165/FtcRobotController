@@ -1,19 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
-import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
-import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
-import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
-import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
-import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
-import static org.firstinspires.ftc.teamcode.robot.Constants.findParking;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -30,8 +19,8 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueFar12Bile")
-public class BlueFar12Bile extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RedFar12Bile")
+public class RedFar12Bile extends OpMode {
 
     private Robot robot = Robot.getInstance();
     private Follower follower;
@@ -40,8 +29,6 @@ public class BlueFar12Bile extends OpMode {
 
     public Pose startPose = new Pose(56, 8);
 
-
-    public PathChain Path0;
     public PathChain Path1;
     public PathChain Path2;
     public PathChain Path3;
@@ -51,83 +38,74 @@ public class BlueFar12Bile extends OpMode {
     public PathChain Path7;
 
     public void buildPaths() {
-        Path0 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(follower.getPose().getX() , follower.getPose().getY()),
-                                new Pose(follower.getPose().getX() , follower.getPose().getY())
-                    )
-                ).setLinearHeadingInterpolation(Math.toRadians(0) , Math.toRadians(90))
-
-                .build();
-
         Path1 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(56.000, 7.000),
-                                new Pose(59.144, 42.092),
-                                new Pose(42.000, 35.000),
-                                new Pose(20.000, 36.000)
+                                new Pose(88.000, 7.000),
+                                new Pose(84.856, 42.092),
+                                new Pose(102.000, 35.000),
+                                new Pose(124.000, 36.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(20.000, 36.000),
+                                new Pose(124.000, 36.000),
 
-                                new Pose(60.000, 15.000)
+                                new Pose(84.000, 15.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(60.000, 15.000),
-                                new Pose(40.121, 7.389),
-                                new Pose(11.796, 8.235)
+                                new Pose(84.000, 15.000),
+                                new Pose(103.879, 7.389),
+                                new Pose(132.204, 8.235)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(11.796, 8.235),
+                                new Pose(132.204, 8.235),
 
-                                new Pose(60.000, 15.000)
+                                new Pose(84.000, 15.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(60.000, 15.000),
+                                new Pose(84.000, 15.000),
 
-                                new Pose(10.000, 16.000)
+                                new Pose(134.000, 16.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(10.000, 16.000),
+                                new Pose(134.000, 16.000),
 
-                                new Pose(60.000, 15.000)
+                                new Pose(84.000, 15.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(60.000, 15.000),
+                                new Pose(84.000, 15.000),
 
-                                new Pose(35.000, 8.000)
+                                new Pose(109.000, 8.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
 
                 .build();
     }
@@ -137,17 +115,14 @@ public class BlueFar12Bile extends OpMode {
             case 0:
                 robot.intake.StartIntake();
                 robot.turret.StartShooter();
-                follower.followPath(Path0 , true);
-                if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>4)
-                    {
-                        robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>6){
-                            robot.intake.CloseStopper();
-                            robot.intake.StopIntake();
-                            follower.followPath(Path1 , true);
-                            setPathState(1);
-                        }
+                if(pathTimer.getElapsedTimeSeconds()>4)
+                {
+                    robot.intake.OpenStopper();
+                    if(pathTimer.getElapsedTimeSeconds()>6){
+                        robot.intake.CloseStopper();
+                        robot.intake.StopIntake();
+                        follower.followPath(Path1 , true);
+                        setPathState(1);
                     }
                 }
                 break;
@@ -225,28 +200,17 @@ public class BlueFar12Bile extends OpMode {
     public void loop() {
 
         // These loop the movements of the robot, these must be called continuously in order to work
-        CAN_SHOOT=true;
         follower.update();
         autonomousPathUpdate();
         robot.intake.Update();
         robot.turret.Update();
-        robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)));
-        robot.vision.Update(20);
-        ROBOT_X = follower.getPose().getX();
-        ROBOT_Y = follower.getPose().getY();
-        HEADING = Math.toDegrees(follower.getHeading());
+        robot.turret.UpdateTurret(TURRET_TARGET);
+        robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
-        telemetry.addData("pathTimer", pathTimer.getElapsedTimeSeconds());
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", HEADING);
-        telemetry.addData("shooterRPM", SHOOTER_RPM);
-        telemetry.addData("angle", ANGLE_POSITION);
-        telemetry.addData("turret angle", ANGLE);
-
+        telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.update();
     }
 
