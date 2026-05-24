@@ -97,12 +97,12 @@ public class Robot{
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        imu = hardwareMap.get(IMU.class , "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(IMU.class , "imu");
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+//                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+//        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+//        imu.initialize(parameters);
 
         ///TURRET
         shooterUp = hardwareMap.get(DcMotorEx.class , "shooterUp ");
@@ -126,11 +126,6 @@ public class Robot{
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
         intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
 
-        dropDownServoLeft = hardwareMap.get(Servo.class , "dropDownLeft");
-        dropDownServoRight = hardwareMap.get(Servo.class , "dropDownRight");
-
-        dropDownServoLeft.setDirection(Servo.Direction.REVERSE);
-        dropDownServoRight.setDirection(Servo.Direction.FORWARD);
 
         stopper = hardwareMap.get(Servo.class , "stopper");
 
@@ -178,17 +173,12 @@ public class Robot{
         intakeMotor = hardwareMap.get(DcMotorEx.class , "intake");
         intakeMotor.setDirection(DcMotorEx.Direction.FORWARD);
 
-        dropDownServoLeft = hardwareMap.get(Servo.class , "dropDownLeft");
-        dropDownServoRight = hardwareMap.get(Servo.class , "dropDownRight");
-
-        dropDownServoLeft.setDirection(Servo.Direction.REVERSE);
-        dropDownServoRight.setDirection(Servo.Direction.FORWARD);
 
         stopper = hardwareMap.get(Servo.class , "stopper");
 
         ///SENSORS
-//        distanceSensor = hardwareMap.get(DistanceSensor.class , "distanceSensor");
-//        distanceSensor2 = hardwareMap.get(DistanceSensor.class , "distanceSensor2");
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class , "colorSensor");
+        colorSensor2 = hardwareMap.get(NormalizedColorSensor.class , "colorSensor2");
 
         ///VISION
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
@@ -207,27 +197,5 @@ public class Robot{
     }
 
     public void Update(){
-//        if(IS_BEFORE_IN_FAR || IS_BEFORE_IN_CLOSE){
-//            turret.StartShooter();
-//        }
-//
-//        if(IS_FULL && !IS_IN_FAR && !IS_IN_CLOSE){
-//            intake.StopIntake();
-//        }
-//
-//        if(!IS_FULL)
-//            intake.StartIntake();
-//
-//        if((IS_IN_CLOSE || IS_IN_FAR) && Math.abs(shooterUp.getVelocity()-SHOOTER_RPM)<50){
-//            CAN_SHOOT=true;
-//            intake.StartIntake();
-//        }
-//        else
-//            CAN_SHOOT=false;
-//
-//        if(!IS_IN_FAR && !IS_BEFORE_IN_FAR && !IS_IN_CLOSE && !IS_BEFORE_IN_CLOSE)
-//            turret.StopShooter();
     }
-
-
 }

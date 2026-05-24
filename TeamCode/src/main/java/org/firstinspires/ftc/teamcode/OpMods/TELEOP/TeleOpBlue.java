@@ -88,40 +88,10 @@ public class TeleOpBlue extends CommandOpMode {
             ((SwitchableLight)robot.colorSensor2).enableLight(true);
         }
         register(robot.drive); ///nush ce face da trebuie
-        /// changes state of intake when Y is pressed
-//        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-//                new InstantCommand(()->robot.intake.ToggleIntake())
-//        );
-
-        /// checks state of shooter when A is pressed
-//        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-//                new InstantCommand(()->robot.turret.ToggleShooter())
-//        );
-//
-//        operator.getGamepadButton(GamepadKeys.Button.B).whenHeld(
-//                new InstantCommand(()->stopperState = Intake.StopperState.OPEN)
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.B).whenReleased(
-//                new InstantCommand(()->stopperState = Intake.StopperState.CLOSE)
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenHeld(
-//                new InstantCommand(()->shooterAngleState = Turret.ShooterAngleState.UP)
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenHeld(
-//                new InstantCommand(()->shooterAngleState = Turret.ShooterAngleState.DOWN)
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenReleased(
-//                new InstantCommand(()->shooterAngleState = Turret.ShooterAngleState.STOP)
-//        );
-//        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(
-//                new InstantCommand(()->shooterAngleState = Turret.ShooterAngleState.STOP)
-//        );
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
             new InstantCommand(()->robot.turret.ToggleShooter())
         );
-//        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-//            new InstantCommand(()->robot.robotState = Robot.RobotState.POSITIONING)
-//        );
+
         driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
             new InstantCommand(()->robot.intake.ToggleIntake())
         );
@@ -174,10 +144,7 @@ public class TeleOpBlue extends CommandOpMode {
         robot.intake.Update(); ///look in subsystem for more info
         robot.turret.Update(); ///look in subsystem for more info
         robot.vision.Update(20);
-//        robot.intake.CheckIntake();
         robot.Update();
-//      robot.intake.CheckIntake();
-//        robot.turret.UpdateTurret(TURRET_TARGET);
         if(ENABLE_AUTO_AIM)
             robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(robot.follower.getHeading()));
         super.run();
@@ -202,6 +169,4 @@ public class TeleOpBlue extends CommandOpMode {
         telemetry.update();
         timer.reset();
     }
-
-
 }

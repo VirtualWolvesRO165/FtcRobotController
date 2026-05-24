@@ -65,17 +65,6 @@ public class Intake extends SubsystemBase {
 
                     break;
             }
-                /// not implemented
-            switch (dropDownState){
-                case ACTIVE:
-                    robot.dropDownServoLeft.setPosition(DROPDOWN_ACTIVE_POSITION);
-                    robot.dropDownServoRight.setPosition(DROPDOWN_ACTIVE_POSITION);
-                    break;
-                case RESTING:
-                    robot.dropDownServoLeft.setPosition(DROPDOWN_REST_POSITION);
-                    robot.dropDownServoRight.setPosition(DROPDOWN_REST_POSITION);
-                    break;
-            }
 
             switch (stopperState){
                 case OPEN:
@@ -86,10 +75,6 @@ public class Intake extends SubsystemBase {
                         robot.stopper.setPosition(STOPPER_CLOSE_POSITION);
             }
             ColorSensors();
-            if(IS_FULL && fullcheck){
-                StartIntake();
-                fullcheck=false;
-            }
         }
 
         /// switches the state of intake between STOP and FORWARD
@@ -101,18 +86,18 @@ public class Intake extends SubsystemBase {
         }
 
         public void ColorSensors() {
-//            NormalizedRGBA colors1 = robot.colorSensor.getNormalizedColors();
-//            NormalizedRGBA colors2 = robot.colorSensor2.getNormalizedColors();
-//            Color.colorToHSV(colors1.toColor(), hsvValues1);
-//            Color.colorToHSV(colors2.toColor(), hsvValues2);
-//            if (hsvValues1[0] != 0 && hsvValues2[0] != 0) {
-//                IS_FULL = true;
-//                fullcheck=true;
-//            }
-//            else {
-//                IS_FULL = false;
-//                fullcheck=false;
-//            }
+            NormalizedRGBA colors1 = robot.colorSensor.getNormalizedColors();
+            NormalizedRGBA colors2 = robot.colorSensor2.getNormalizedColors();
+            Color.colorToHSV(colors1.toColor(), hsvValues1);
+            Color.colorToHSV(colors2.toColor(), hsvValues2);
+            if (hsvValues1[2] != 0 && hsvValues2[2] != 0) {
+                IS_FULL = true;
+                fullcheck=true;
+            }
+            else {
+                IS_FULL = false;
+                fullcheck=false;
+            }
         }
 
         public void StartIntake(){
@@ -128,12 +113,3 @@ public class Intake extends SubsystemBase {
             stopperState=StopperState.CLOSE;
         }
     }
-
-//        public void CheckIntake() {
-//            if(robot.distanceSensor.getDistance(DistanceUnit.CM)<14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)<7){
-//                IS_FULL=true;
-//            }
-//            if(robot.distanceSensor.getDistance(DistanceUnit.CM)>14 && robot.distanceSensor2.getDistance(DistanceUnit.CM)>7){
-//                IS_FULL=false;
-//            }
-//        }

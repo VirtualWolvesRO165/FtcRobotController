@@ -56,6 +56,4 @@ public class TestTeleOp extends CommandOpMode {
         super.run();telemetry.update();
        timer.reset();
     }
-
-
 }

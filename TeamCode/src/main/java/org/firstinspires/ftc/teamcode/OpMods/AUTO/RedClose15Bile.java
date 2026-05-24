@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.ADDITIONAL_OFFSET_TURRET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
-import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
+import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_POSE_BLUE;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -88,13 +92,14 @@ public class RedClose15Bile extends OpMode {
 
                 .build();
 
+
         Path5 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(127.900, 65.300),
                                 new Pose(119.377, 55.979),
                                 new Pose(134.000, 58.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0) , Math.toRadians(25))
 
                 .build();
 
@@ -104,7 +109,7 @@ public class RedClose15Bile extends OpMode {
 
                                 new Pose(80.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(45))
+                ).setLinearHeadingInterpolation(Math.toRadians(25),Math.toRadians(45))
 
                 .build();
 
@@ -143,6 +148,7 @@ public class RedClose15Bile extends OpMode {
         switch (pathState) {
             case 0:
                 robot.turret.StartShooter();
+                ANGLE_POSITION=1;
                 robot.intake.CloseStopper();
                 follower.followPath(Path1 , true);
                 setPathState(1);
@@ -150,11 +156,11 @@ public class RedClose15Bile extends OpMode {
 
             case 1:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>5)
+                    robot.intake.StartIntake();
+                    if(pathTimer.getElapsedTimeSeconds()>2.5)
                     {
-                        robot.intake.StartIntake();
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>6.5){
+                        if(pathTimer.getElapsedTimeSeconds()>3.5){
                             robot.intake.CloseStopper();
                             setPathState(2);
                         }
@@ -163,8 +169,9 @@ public class RedClose15Bile extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy()) {
+                    ANGLE_POSITION=0.8;
                     robot.intake.StartIntake();
-                    follower.followPath(Path2 ,.6 ,  true);
+                    follower.followPath(Path2 ,.8 ,  true);
                     setPathState(3);
                 }
                 break;
@@ -178,7 +185,7 @@ public class RedClose15Bile extends OpMode {
                 if(!follower.isBusy()){
                     robot.intake.StartIntake();
                     robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>3.5){
+                    if(pathTimer.getElapsedTimeSeconds()>2.8){
                         robot.intake.CloseStopper();
                         follower.followPath(Path4 , true);
                         setPathState(5);
@@ -188,51 +195,71 @@ public class RedClose15Bile extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     robot.intake.CloseStopper();
-                    follower.followPath(Path5,.6 , true);
+                    follower.followPath(Path5,.8 , true);
                     setPathState(6);
                 }
                 break;
             case 6:
-                if (!follower.isBusy()) {
+                if (pathTimer.getElapsedTimeSeconds()>2.8) {
                     robot.intake.CloseStopper();
                     follower.followPath(Path6 , true);
                     setPathState(7);
                 }
                 break;
             case 7:
-                if (!follower.isBusy()) {
+                if(!follower.isBusy()){
+                    robot.intake.StartIntake();
                     robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>3.5){
+                    if(pathTimer.getElapsedTimeSeconds()>2.8){
                         robot.intake.CloseStopper();
-                        follower.followPath(Path8 , true);
+                        follower.followPath(Path4 , true);
                         setPathState(8);
                     }
                 }
                 break;
             case 8:
-                if(!follower.isBusy())
-                {
-                    follower.followPath(Path9);
+                if (!follower.isBusy()) {
+                    robot.intake.CloseStopper();
+                    follower.followPath(Path5,.8 , true);
                     setPathState(9);
                 }
                 break;
-
             case 9:
-                if (!follower.isBusy()) {
-                    robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>3.5){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path7 , true);
-                        setPathState(10);
-                    }
+                if (pathTimer.getElapsedTimeSeconds()>2.2) {
+                    robot.intake.CloseStopper();
+                    follower.followPath(Path6 , true);
+                    setPathState(10);
                 }
                 break;
             case 10:
-                if(!follower.isBusy()){
-
+                if (!follower.isBusy()) {
+                    robot.intake.OpenStopper();
+                    if(pathTimer.getElapsedTimeSeconds()>2.8){
+                        robot.intake.CloseStopper();
+                        follower.followPath(Path8 , true);
+                        setPathState(11);
+                    }
                 }
                 break;
             case 11:
+                if(!follower.isBusy())
+                {
+                    follower.followPath(Path9);
+                    setPathState(12);
+                }
+                break;
+
+            case 12:
+                if (!follower.isBusy()) {
+                    robot.intake.OpenStopper();
+                    if(pathTimer.getElapsedTimeSeconds()>2.8){
+                        robot.intake.CloseStopper();
+                        follower.followPath(Path7 , true);
+                        setPathState(13);
+                    }
+                }
+                break;
+            case 13:
                 if(!follower.isBusy()){
                     robot.intake.StopIntake();
                     robot.turret.StopShooter();
@@ -262,8 +289,7 @@ public class RedClose15Bile extends OpMode {
         robot.intake.Update();
         robot.turret.Update();
         robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)));
+        SHOOTER_RPM=1420;
         robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();

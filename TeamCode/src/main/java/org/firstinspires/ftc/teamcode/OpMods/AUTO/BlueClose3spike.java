@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_RADIUS;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
@@ -27,8 +28,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueClose15Bile")
-public class BlueClose15Bile extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueClose3spike")
+public class BlueClose3spike extends OpMode {
 
     private Robot robot = Robot.getInstance();
     private Follower follower;
@@ -48,76 +49,46 @@ public class BlueClose15Bile extends OpMode {
     public PathChain Path8;
     public PathChain Path9;
     public PathChain Path10;
+    public PathChain Path11;
 
     public void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(24.800, 124.800),
-                                new Pose(64.000, 84.000)
+                                new Pose(26.800, 127.000),
+
+                                new Pose(60.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0) , Math.toRadians(135))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(64.000, 84.000),
-                                new Pose(47.654, 70.107),
-                                new Pose(43.977, 54.530),
-                                new Pose(18.000, 60.000)
+                                new Pose(60.000, 84.000),
+                                new Pose(57.360, 53.011),
+                                new Pose(17.000, 60.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(18.000, 60.000),
+                                new Pose(17.000, 60.000),
 
                                 new Pose(60.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(180))
-
-                .build();
-
-        Path10 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(60.000, 84.000),
-
-                                new Pose(50.000, 84.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(180))
-
-                .build();
-
-        Path8 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(50.000, 84.000),
-
-                                new Pose(18.000, 84.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(180))
-
-                .build();
-
-
-        Path9 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(18.000, 82.000),
-
-                                new Pose(60.000, 84.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 84.000),
-                                new Pose(40.495 , 64.418),
+                                new Pose(40.272, 66.866),
                                 new Pose(21.100, 65.300)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
@@ -126,26 +97,68 @@ public class BlueClose15Bile extends OpMode {
                                 new Pose(21.100, 65.300),
                                 new Pose(21.952, 56.000),
                                 new Pose(17.903, 55.210),
-                                new Pose(12, 55.781)
+                                new Pose(12.387, 50.781)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(155))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(145))
 
                 .build();
+
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(12, 55.781),
+                                new Pose(12.387, 50.781),
 
                                 new Pose(60.000, 84.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(155) , Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
 
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(60.000, 84.000),
+                                new Pose(56.921, 60.948),
+                                new Pose(55.144, 29.905),
+                                new Pose(18.000, 35.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path8 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(18.000, 35.000),
+
+                                new Pose(60.000, 84.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(60.000, 84.000),
 
-                                new Pose(55.500, 112.500)
+                                new Pose(22.000, 84.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path10 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(22.000, 84.000),
+
+                                new Pose(60.000, 84.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+
+        Path11 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(60.000, 84.000),
+
+                                new Pose(55.800, 112.800)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
 
@@ -156,7 +169,6 @@ public class BlueClose15Bile extends OpMode {
         switch (pathState) {
             case 0:
                 robot.turret.StartShooter();
-                ANGLE_POSITION=0.8;
                 robot.intake.CloseStopper();
                 follower.followPath(Path1 , true);
                 setPathState(1);
@@ -165,10 +177,10 @@ public class BlueClose15Bile extends OpMode {
             case 1:
                 if(!follower.isBusy()){
                     robot.intake.StartIntake();
-                    if(pathTimer.getElapsedTimeSeconds()>2.5)
+                    if(pathTimer.getElapsedTimeSeconds()>3.7)
                     {
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>3.5){
+                        if(pathTimer.getElapsedTimeSeconds()>4.3){
                             robot.intake.CloseStopper();
                             setPathState(2);
                         }
@@ -177,9 +189,8 @@ public class BlueClose15Bile extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    ANGLE_POSITION=0.8;
                     robot.intake.StartIntake();
-                    follower.followPath(Path2 ,.8 ,  true);
+                    follower.followPath(Path2 ,.7 ,  true);
                     setPathState(3);
                 }
                 break;
@@ -191,19 +202,21 @@ public class BlueClose15Bile extends OpMode {
                 break;
             case 4:
                 if(!follower.isBusy()){
-                    robot.intake.StartIntake();
-                    robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2.8){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path4 ,.6, true);
-                        setPathState(5);
+                    if(pathTimer.getElapsedTimeSeconds()>3.4){
+                        robot.intake.StartIntake();
+                        robot.intake.OpenStopper();
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path4, 1, true);
+                            setPathState(5);
+                        }
                     }
                 }
                 break;
             case 5:
                 if (!follower.isBusy()) {
                     robot.intake.CloseStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2){
+                    if(pathTimer.getElapsedTimeSeconds()>1.9){
                         follower.followPath(Path5, 1, true);
                         setPathState(6);
                     }
@@ -211,7 +224,7 @@ public class BlueClose15Bile extends OpMode {
                 break;
             case 6:
                 if(!follower.isBusy()) {
-                    if (pathTimer.getElapsedTimeSeconds() > 3.5) {
+                    if (pathTimer.getElapsedTimeSeconds() > 2) {
                         robot.intake.CloseStopper();
                         follower.followPath(Path6, true);
                         setPathState(7);
@@ -220,68 +233,58 @@ public class BlueClose15Bile extends OpMode {
                 break;
             case 7:
                 if(!follower.isBusy()){
-                    robot.intake.StartIntake();
-                    robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2.8){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path4 ,.6 ,true);
-                        setPathState(8);
+                    if(pathTimer.getElapsedTimeSeconds()>3.5) {
+                        robot.intake.StartIntake();
+                        robot.intake.OpenStopper();
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path7, 1, true);
+                            setPathState(8);
+                        }
                     }
                 }
                 break;
             case 8:
                 if (!follower.isBusy()) {
                     robot.intake.CloseStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2){
-                        follower.followPath(Path5, .7, true);
+                        follower.followPath(Path8, 1, true);
                         setPathState(9);
-                    }
                 }
                 break;
             case 9:
-                if(!follower.isBusy()) {
-                    if (pathTimer.getElapsedTimeSeconds() > 3.5) {
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path6, true);
-                        setPathState(10);
+                if(!follower.isBusy()){
+                    if(pathTimer.getElapsedTimeSeconds()>3.5) {
+                        robot.intake.StartIntake();
+                        robot.intake.OpenStopper();
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path9, 1, true);
+                            setPathState(10);
+                        }
                     }
                 }
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2.4){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path10 , true);
+                    robot.intake.CloseStopper();
+                        follower.followPath(Path10, 1, true);
                         setPathState(11);
-                    }
                 }
                 break;
             case 11:
-                if(!follower.isBusy()){
-                    follower.followPath(Path8,true);
-                    setPathState(12);
-                }
-                break;
-            case 12:
-                if(!follower.isBusy())
-                {
-                    follower.followPath(Path9);
-                    setPathState(13);
-                }
-                break;
+                if(!follower.isBusy()) {
+                    if(pathTimer.getElapsedTimeSeconds()>2.2) {
 
-            case 13:
-                if (!follower.isBusy()) {
-                    robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>2.8){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path7 , true);
-                        setPathState(14);
+                        robot.intake.OpenStopper();
+                        if (pathTimer.getElapsedTimeSeconds() > 3) {
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path11, true);
+                            setPathState(12);
+                        }
                     }
                 }
                 break;
-            case 14:
+            case 12:
                 if(!follower.isBusy()){
                     robot.intake.StopIntake();
                     robot.turret.StopShooter();
@@ -308,11 +311,15 @@ public class BlueClose15Bile extends OpMode {
         CAN_SHOOT=true;
         follower.update();
         autonomousPathUpdate();
+
         robot.intake.Update();
-        robot.turret.Update();
         robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        robot.vision.Update(20);
+        SHOOTER_RPM=1470 * (13.00/robot.batteryVoltage.getVoltage());
+        robot.shooterUp.setVelocity(SHOOTER_RPM);
+        robot.shooterDown.setVelocity(SHOOTER_RPM);
+        ANGLE_POSITION = 0.65;
+        robot.shooterAngle.setPosition(ANGLE_POSITION);
+        robot.vision.Update(24);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
         HEADING = Math.toDegrees(follower.getHeading());

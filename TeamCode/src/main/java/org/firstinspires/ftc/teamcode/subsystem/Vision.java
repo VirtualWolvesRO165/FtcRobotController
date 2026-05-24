@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ADDITIONAL_OFFSET_TURRET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.LIMELIGHT_DISTANCE;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.old.Limelight;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 public class Vision extends SubsystemBase {
 
     private final Robot robot = Robot.getInstance();
     public double[] pythonOutputs;
-
     public enum LimelightState {
         APRIL_TAG
     }
@@ -43,6 +44,10 @@ public class Vision extends SubsystemBase {
                 ADDITIONAL_OFFSET_TURRET = (int) pythonOutputs[1];
             } else
                 ADDITIONAL_OFFSET_TURRET = 0;
+            if(pythonOutputs[5]!=0)
+                LIMELIGHT_DISTANCE=(double)pythonOutputs[5]*100+20;
+            else
+                LIMELIGHT_DISTANCE = -1;
         }
     }
 }

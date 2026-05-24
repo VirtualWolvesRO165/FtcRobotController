@@ -1,100 +1,236 @@
 package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
-import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_AUTO_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
-import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
-import static org.firstinspires.ftc.teamcode.robot.Constants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.robot.Constants.OFFSET_TURRET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
-import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_TARGET;
-import static org.firstinspires.ftc.teamcode.robot.Constants.findParking;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RedFar3Bile")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueFar6Bile")
 public class BlueFar6bile extends OpMode {
 
     private Robot robot = Robot.getInstance();
-    private Follower follower;    private Timer pathTimer, actionTimer, opmodeTimer;
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
+    public static int autoOffset=-3;
+    public static int shooterOffset=850;
+    private double startHeading;
 
-    public Pose startPose = new Pose(88, 8);
+    public Pose startPose = new Pose(56,8);
 
     public PathChain Path0;
     public PathChain Path1;
+
     public PathChain Path2;
     public PathChain Path3;
     public PathChain Path4;
     public PathChain Path5;
-    public PathChain Path6;
-    public PathChain Path7;
 
     public void buildPaths() {
+
         Path0 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88,8),
-                                new Pose(88,14)
+                                new Pose(56.000, 8.000),
+
+                                new Pose(58.000, 17.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0) , Math.toRadians(90))
+                ).setLinearHeadingInterpolation(Math.toRadians(0) , Math.toRadians(180))
+                .build();
+
+
+        Path1 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(58.000, 17.000),
+
+                                new Pose(44.000, 9.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        Path2 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(44.000, 9.000),
+
+                                new Pose(8.000, 9.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
 
+        Path3 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(8.000, 9.000),
+
+                                new Pose(58.000, 17.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
+
+                .build();
+        Path4 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(58.000, 17.000),
+
+                                new Pose(38.000, 13.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180) , Math.toRadians(0))
+
+                .build();
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(88.000, 14.000),
+                                new Pose(44.000, 9.000),
 
-                                new Pose(109.000, 9.000)
+                                new Pose(8.000, 18.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                ).setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
+
     }
 
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 0:
-                robot.intake.StartIntake();
-                robot.turret.StartShooter();
-                SHOOTER_RPM_OFFSET+=250;
-                follower.followPath(Path0 , true);
+            case 0 :
+                follower.followPath(Path0);
+                robot.intake.StopIntake();
+                robot.turret.StopShooter();
                 setPathState(1);
                 break;
             case 1:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>4)
-                    {
+                SHOOTER_RPM_OFFSET=350;
+                robot.intake.StartIntake();
+                robot.intake.CloseStopper();
+                robot.turret.StartShooter();
+                if(pathTimer.getElapsedTimeSeconds()>5){
+                    robot.intake.OpenStopper();
+                    if(pathTimer.getElapsedTimeSeconds()>6) {
+                        robot.intake.CloseStopper();
+                        follower.followPath(Path1, true);
+                        setPathState(2);
+                    }
+                    }
+                }
+
+                break;
+
+            case 2:
+                if(!follower.isBusy()){
+                    follower.followPath(Path2 , 1 ,true);
+                    if(pathTimer.getElapsedTimeSeconds()>2)
+                        setPathState(3);
+                }
+
+                break;
+            case 3:
+                if (!follower.isBusy()) {
+                    SHOOTER_RPM_OFFSET=450;
+                    follower.followPath(Path3 , true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if(!follower.isBusy()) {robot.intake.StartIntake();
+                    robot.intake.CloseStopper();
+                    robot.turret.StartShooter();
+                    if(pathTimer.getElapsedTimeSeconds()>2){
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>6){
+                        if(pathTimer.getElapsedTimeSeconds()>3){
                             robot.intake.CloseStopper();
-                            follower.followPath(Path5 , true);
-                            setPathState(2);
+                            follower.followPath(Path2 , true);
+                            setPathState(5);
                         }
                     }
                 }
                 break;
-            case 2:
-                if(!follower.isBusy())
+            case 5:
+                if(!follower.isBusy()) {
+                    if(pathTimer.getElapsedTimeSeconds()>1.5) {
+                        follower.followPath(Path3, true);
+                        setPathState(6);
+                    }
+                }
+                break;
+            case 6:
+                if(!follower.isBusy()) {robot.intake.StartIntake();
+                    robot.intake.CloseStopper();
+                    robot.turret.StartShooter();
+                    if(pathTimer.getElapsedTimeSeconds()>2){
+                        robot.intake.OpenStopper();
+                        if(pathTimer.getElapsedTimeSeconds()>3){
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path5 , true);
+                            setPathState(7);
+                        }
+                    }
+                }
+                break;
+            case 7:
+                if(!follower.isBusy()) {
+                    if(pathTimer.getElapsedTimeSeconds()>1.5) {
+                        follower.followPath(Path3, true);
+                        setPathState(8);
+                    }
+                }
+                break;
+            case 8:
+                if(!follower.isBusy()) {robot.intake.StartIntake();
+                    robot.intake.CloseStopper();
+                    robot.turret.StartShooter();
+                    if(pathTimer.getElapsedTimeSeconds()>2){
+                        robot.intake.OpenStopper();
+                        if(pathTimer.getElapsedTimeSeconds()>3){
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path5 , true);
+                            setPathState(9);
+                        }
+                    }
+                }
+                break;
+            case 9:
+                if(!follower.isBusy()) {
+                    if(pathTimer.getElapsedTimeSeconds()>1.5) {
+                        follower.followPath(Path3, true);
+                        setPathState(10);
+                    }
+                }
+                break;
+            case 10:
+                if (!follower.isBusy()) {
+                    if(pathTimer.getElapsedTimeSeconds()>2)
+                        robot.intake.OpenStopper();
+                    if(pathTimer.getElapsedTimeSeconds()>3){
+                        robot.intake.CloseStopper();
+                        follower.followPath(Path4 , true);
+                        SHOOTER_RPM_OFFSET=0;
+                        setPathState(11);
+                    }
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()) {
                     setPathState(-1);
+                }
                 break;
         }
     }
@@ -118,9 +254,9 @@ public class BlueFar6bile extends OpMode {
         autonomousPathUpdate();
         robot.intake.Update();
         robot.turret.Update();
-        robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
-        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(RED_BASKET_X - ROBOT_X, 2) + Math.pow(RED_BASKET_Y - ROBOT_Y, 2)));
+        robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(follower.getHeading()));
+        SHOOTER_RPM=robot.turret.FlywheelSpeed(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)))+SHOOTER_RPM_OFFSET;
+        ANGLE_POSITION = robot.turret.shooterAngle(Math.sqrt(Math.pow(BLUE_BASKET_X - ROBOT_X, 2) + Math.pow(BLUE_BASKET_Y - ROBOT_Y, 2)));
         robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
@@ -136,6 +272,7 @@ public class BlueFar6bile extends OpMode {
         telemetry.addData("turret angle", ANGLE);
 
         telemetry.update();
+
     }
 
     /**
@@ -146,12 +283,13 @@ public class BlueFar6bile extends OpMode {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
         robot.initAuto(hardwareMap);
-        robot.turret.StartShooter();
-        robot.shooterAngle.setPosition(ANGLE_AUTO_POSITION);
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
-
+        startHeading = Math.toDegrees(follower.getHeading());
+        robot.limelight.setPollRateHz(100);
+        robot.limelight.pipelineSwitch(1);
+        robot.limelight.start();
 
     }
 
@@ -161,7 +299,7 @@ public class BlueFar6bile extends OpMode {
     public void init_loop() {
     }
 
-    /**]\ t
+    /**
      * This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system
      **/
@@ -174,9 +312,8 @@ public class BlueFar6bile extends OpMode {
      * We do not use this because everything should automatically disable
      **/
     public void stop() {
-        ROBOT_X=109;
-        ROBOT_Y=9;
+        ROBOT_X=38;
+        ROBOT_Y=13;
         HEADING=0;
-        SHOOTER_RPM_OFFSET=0;
     }
 }

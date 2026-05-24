@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.pedroCommand.TurnCommand;
 
+import static org.firstinspires.ftc.teamcode.robot.Constants.DRIVE_MULTIPLIER;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_CLOSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_BEFORE_IN_FAR;
+import static org.firstinspires.ftc.teamcode.robot.Constants.IS_FULL;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_RADIUS;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
@@ -21,6 +26,7 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.leavingLaunchZone;
 
 import android.net.wifi.aware.ParcelablePeerHandle;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
@@ -28,9 +34,10 @@ import java.util.List;
 
 public class Drive extends SubsystemBase {
     private final Robot robot = Robot.getInstance();
-    private boolean endGameRumble=false;
-    private boolean parkRumble=false;
-    private boolean launchZoneRumble = false;
+
+    public enum DriveMode{
+        PARKING , MAXIMUM
+    }
 
     private Polygon farZone = new Polygon(List.of(
             new Point(49, 0),
@@ -73,32 +80,18 @@ public class Drive extends SubsystemBase {
             new Point(96, 24)
     ));
 
+    public static DriveMode driveMode = DriveMode.MAXIMUM;
+
     public void init() {
     }
 
     public void Update(double p_drive, double strafe, double turn) {
-        turn/=2;
-//        double y = p_drive;
-//        double x = strafe;
-//        double rx = turn;
-//
-//        double botHeading = robot.follower.getPose().getHeading();
-//        double rotX = x* Math.cos(-botHeading) - y* Math.sin(-botHeading);
-//        double rotY = x* Math.sin(-botHeading) - y* Math.cos(-botHeading);
-//
-//        rotX*=1.1;
-//
-//        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(rx), 1);
-//
-//        robot.leftFront.setPower((rotY + rotX + rx)/denominator);
-//        robot.leftBack.setPower((rotY - rotX + rx)/denominator);
-//        robot.rightFront.setPower((rotY - rotX - rx)/denominator);
-//        robot.rightBack.setPower((rotY + rotX - rx)/denominator);
-
-        robot.leftFront.setPower(p_drive + strafe + turn);
-        robot.leftBack.setPower(p_drive - strafe + turn);
-        robot.rightFront.setPower(p_drive - strafe - turn);
-        robot.rightBack.setPower(p_drive + strafe - turn);
+        strafe = strafe * 1.1;  // Counteract imperfect strafing
+        double denominator = Math.max(Math.abs(p_drive) + Math.abs(strafe) + Math.abs(turn), 1);
+        robot.leftFront.setPower((p_drive + strafe + turn)/denominator * DRIVE_MULTIPLIER);
+        robot.leftBack.setPower((p_drive - strafe + turn)/denominator * DRIVE_MULTIPLIER);
+        robot.rightFront.setPower((p_drive - strafe - turn)/denominator * DRIVE_MULTIPLIER);
+        robot.rightBack.setPower((p_drive + strafe - turn)/denominator * DRIVE_MULTIPLIER);
 
         robot.follower.update();
         ROBOT_X = robot.follower.getPose().getX();
@@ -112,6 +105,14 @@ public class Drive extends SubsystemBase {
         else
             IS_IN_PARKING = isInRedParking(ROBOT_X, ROBOT_Y, ROBOT_RADIUS, redParkingZone.vertices.get(0), redParkingZone.vertices.get(1), redParkingZone.vertices.get(2), redParkingZone.vertices.get(3));
 
+        switch (driveMode){
+            case PARKING:
+                DRIVE_MULTIPLIER=0.15;
+                break;
+            case MAXIMUM:
+                DRIVE_MULTIPLIER=1;
+                break;
+        }
 //        if (runTime.seconds() >= 140 && !endGameRumble) {
 //            driver.runRumbleEffect(endGame);
 //            operator.runRumbleEffect(endGame);
@@ -142,6 +143,16 @@ public class Drive extends SubsystemBase {
 //            operator.runRumbleEffect(leavingLaunchZone);
 //            launchZoneRumble=false;
 //        }
+    }
+
+    public void ToggleDrive(){
+        if(driveMode == DriveMode.MAXIMUM){
+            driveMode = DriveMode.PARKING;
+            return;
+        }
+        if(driveMode == DriveMode.PARKING){
+            driveMode = DriveMode.MAXIMUM;
+        }
     }
     public double cross(double ax, double ay, double bx, double by, double px, double py) {
         return (bx - ax) * (py - ay) - (by - ay) * (px - ax);
@@ -253,6 +264,15 @@ public class Drive extends SubsystemBase {
                 distanceToSegment(px, py, b.x, b.y, c.x, c.y) <= 0 ||
                 distanceToSegment(px, py, c.x, c.y, d.x, d.y) <= 0 ||
                 distanceToSegment(px, py, d.x, d.y, a.x, a.y) <= 0;
+    }
+
+    public void ResetPositionBlue(){
+        robot.follower.setPose(new Pose(23.9 , 125));
+        robot.follower.setHeading(2.44);
+    }
+    public void ResetPositionRed(){
+        robot.follower.setPose(new Pose(120.6 , 125));
+        robot.follower.setHeading(0.66);
     }
 
 

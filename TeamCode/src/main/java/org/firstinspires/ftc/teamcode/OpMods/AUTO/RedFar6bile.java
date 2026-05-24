@@ -93,9 +93,9 @@ public class RedFar6bile extends OpMode {
                 robot.intake.StartIntake();
                 robot.intake.CloseStopper();
                 robot.turret.StartShooter();
-                if(pathTimer.getElapsedTimeSeconds()>5){
+                if(pathTimer.getElapsedTimeSeconds()>4){
                     robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>6.5){
+                    if(pathTimer.getElapsedTimeSeconds()>5){
                         robot.intake.CloseStopper();
                         follower.followPath(Path1 , true);
                         setPathState(1);

@@ -37,6 +37,7 @@ public class Constants {
     public static boolean IS_IN_PARKING = false;
     public static boolean IS_FULL=false;
     public static boolean CAN_SHOOT=false;
+    public static double DRIVE_MULTIPLIER;
 
 
     ///INTAKE
@@ -47,13 +48,15 @@ public class Constants {
     public static double STOPPER_OPEN_POSITION=0;
 
     /// TURRET
-    public static double SHOOTER_RPM =6000;
+    public static double SHOOTER_RPM;
     public static double SHOOTER_RPM_OFFSET=0;
     public static double ANGLE_AUTO_POSITION=1;
     public static int OFFSET_TURRET=0;
     public static int ADDITIONAL_OFFSET_TURRET=0;
     public static double ANGLE_POSITION;
     public static int TURRET_TARGET=0;
+    public static int TURRET_POSE_BLUE=570;
+    public static int TURRET_POSE_RED=570;
     public static boolean ENABLE_AUTO_AIM=true;
     public static final double TURRET_ENCOUDER_TICKS=403;
     public static double TURRET_OFFSET_Y=4;
@@ -62,6 +65,7 @@ public class Constants {
     ///UTIL
     public static double NOW;
     public static double ANGLE;
+    public static double LIMELIGHT_DISTANCE=-1;
 
     /// FIELD
     public static double BLUE_BASKET_X=0;

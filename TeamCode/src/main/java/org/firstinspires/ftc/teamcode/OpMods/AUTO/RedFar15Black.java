@@ -3,8 +3,9 @@ package org.firstinspires.ftc.teamcode.OpMods.AUTO;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ADDITIONAL_OFFSET_TURRET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
-import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_X;
-import static org.firstinspires.ftc.teamcode.robot.Constants.BLUE_BASKET_Y;
+import static org.firstinspires.ftc.teamcode.robot.Constants.OFFSET_TURRET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_X;
+import static org.firstinspires.ftc.teamcode.robot.Constants.RED_BASKET_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.CAN_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
@@ -13,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM_OFFSET;
 import static org.firstinspires.ftc.teamcode.robot.Constants.START_HEADING;
 import static org.firstinspires.ftc.teamcode.robot.Constants.TURRET_POSE_BLUE;
+import static org.firstinspires.ftc.teamcode.robot.Constants.alliance;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -27,8 +29,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="BlueFarHuman")
-public class BlueFarHuman extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="RedFar15Black")
+public class RedFar15Black extends OpMode {
 
     private Robot robot = Robot.getInstance();
     private Follower follower;
@@ -36,7 +38,7 @@ public class BlueFarHuman extends OpMode {
     private int pathState;
     private double startHeading;
 
-    public Pose startPose = new Pose(56, 8);
+    public Pose startPose = new Pose(88, 8);
 
     public PathChain Path1;
     public PathChain Path2;
@@ -44,66 +46,97 @@ public class BlueFarHuman extends OpMode {
     public PathChain Path4;
     public PathChain Path5;
     public PathChain Path6;
+    public PathChain Path7;
+    public PathChain Path8;
+    public PathChain Path9;
+
     public void buildPaths() {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.000, 8.000),
+                                new Pose(88.000, 8.000),
 
-                                new Pose(58.000, 17.000)
+                                new Pose(88.000, 17.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(58.000, 17.000),
-
-                                new Pose(13.000, 9.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path3 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(13.000, 9.000),
-
-                                new Pose(58.000, 17.000)
-                        )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
-
-                .build();
-
-        Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(58.000, 17.000),
-                                new Pose(17.919, 5.066),
-                                new Pose(10.353, 10.740),
-                                new Pose(8.009, 28.213),
-                                new Pose(10.332, 35.875)
+                                new Pose(88.000, 17.000),
+                                new Pose(93.859, 39.238),
+                                new Pose(130.000, 35.000)
                         )
                 ).setTangentHeadingInterpolation()
 
                 .build();
 
+        Path3 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(130.000, 35.000),
+
+                                new Pose(88.000, 17.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
+
+                .build();
+
+        Path4 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(88.000, 17.000),
+                                new Pose(108.271, 8.586),
+                                new Pose(132.000, 9.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
+
+                .build();
+
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(10.332, 35.875),
+                                new Pose(132.000, 9.000),
 
-                                new Pose(58.000, 17.000)
+                                new Pose(88.000, 17.000)
                         )
-                ).setConstantHeadingInterpolation(Math.toRadians(180))
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(58.000, 17.000),
-
-                                new Pose(36.000, 12.000)
+                        new BezierCurve(
+                                new Pose(88.000, 17.000),
+                                new Pose(133.279, 13.191),
+                                new Pose(135.724, 0.838),
+                                new Pose(135.155, 37.751)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+                ).setTangentHeadingInterpolation()
+
+                .build();
+
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(135.155, 37.751),
+
+                                new Pose(88.000, 17.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
+
+                .build();
+        Path9 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(132, 9),
+
+                                new Pose(88.000, 17.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
+
+                .build();
+        Path8 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(88.000, 17.000),
+
+                                new Pose(108.000, 12.000)
+                        )
+                ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                 .build();
     }
@@ -111,21 +144,21 @@ public class BlueFarHuman extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                robot.intake.StartIntake();
+                ANGLE_POSITION = .75;
+                OFFSET_TURRET=10;
                 robot.turret.StartShooter();
-                ANGLE_POSITION=0.8;
+                robot.intake.StartIntake();
                 robot.intake.CloseStopper();
                 follower.followPath(Path1 , true);
                 setPathState(1);
                 break;
             case 1:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>4){
+                    if(pathTimer.getElapsedTimeSeconds()>3){
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>5)
-                        {
+                        if(pathTimer.getElapsedTimeSeconds()>3.5){
                             robot.intake.CloseStopper();
-                            follower.followPath(Path2);
+                            follower.followPath(Path2 , 1 , true);
                             setPathState(2);
                         }
                     }
@@ -134,18 +167,19 @@ public class BlueFarHuman extends OpMode {
             case 2:
                 if(!follower.isBusy()){
                     if(pathTimer.getElapsedTimeSeconds()>2){
-                        follower.followPath(Path3);
+                        OFFSET_TURRET=2;
+                        follower.followPath(Path3, 1 , true);
                         setPathState(3);
                     }
                 }
                 break;
             case 3:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds()>2){
+                    if(pathTimer.getElapsedTimeSeconds()>3){
                         robot.intake.OpenStopper();
-                        if(pathTimer.getElapsedTimeSeconds()>3){
+                        if(pathTimer.getElapsedTimeSeconds()>3.5){
                             robot.intake.CloseStopper();
-                            follower.followPath(Path4);
+                            follower.followPath(Path4 , 1 ,true);
                             setPathState(4);
                         }
                     }
@@ -153,41 +187,65 @@ public class BlueFarHuman extends OpMode {
                 break;
             case 4:
                 if(!follower.isBusy()){
-                    follower.followPath(Path5);
-                    setPathState(5);
+                    OFFSET_TURRET=5;
+                    if(pathTimer.getElapsedTimeSeconds()>2.6){
+                        follower.followPath(Path5 , 1 , true);
+                        setPathState(5);
+                    }
                 }
                 break;
             case 5:
                 if(!follower.isBusy()){
-                if(pathTimer.getElapsedTimeSeconds()>2){
-                    robot.intake.OpenStopper();
                     if(pathTimer.getElapsedTimeSeconds()>3){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path4);
-                        setPathState(6);
+                        robot.intake.OpenStopper();
+                        if(pathTimer.getElapsedTimeSeconds()>3.5){
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path4 , .7 , true);
+                            setPathState(6);
+                        }
                     }
                 }
-            }
                 break;
             case 6:
                 if(!follower.isBusy()){
-                    follower.followPath(Path5);
+                    OFFSET_TURRET=2;
+                    follower.followPath(Path9 , 1 , true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if(!follower.isBusy()){
-                if(pathTimer.getElapsedTimeSeconds()>2){
-                    robot.intake.OpenStopper();
-                    if(pathTimer.getElapsedTimeSeconds()>3){
-                        robot.intake.CloseStopper();
-                        follower.followPath(Path6);
-                        setPathState(8);
+                    if(pathTimer.getElapsedTimeSeconds()>3.5){
+                        robot.intake.OpenStopper();
+                        if(pathTimer.getElapsedTimeSeconds()>4){
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path6 , .7 , true);
+                            setPathState(8);
+                        }
                     }
                 }
-            }
                 break;
             case 8:
+                if(!follower.isBusy()){
+                    ANGLE_POSITION = .85;
+                    OFFSET_TURRET=2;
+                    follower.followPath(Path7 , 1 , true);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                if(!follower.isBusy()){
+                    if(pathTimer.getElapsedTimeSeconds()>3.5){
+                        robot.intake.OpenStopper();
+                        if(pathTimer.getElapsedTimeSeconds()>4){
+                            robot.intake.CloseStopper();
+                            follower.followPath(Path8 , 1 , true);
+                            setPathState(10);
+                        }
+                    }
+                }
+                break;
+            case 10:
                 if(!follower.isBusy()){
                     robot.intake.StopIntake();
                     robot.turret.StopShooter();
@@ -216,8 +274,8 @@ public class BlueFarHuman extends OpMode {
         autonomousPathUpdate();
         robot.intake.Update();
         robot.turret.Update();
-        robot.turret.AutoAim(BLUE_BASKET_X , BLUE_BASKET_Y , Math.toDegrees(follower.getHeading()));
-        SHOOTER_RPM=2000;
+        robot.turret.AutoAim(RED_BASKET_X , RED_BASKET_Y , Math.toDegrees(follower.getHeading()));
+        SHOOTER_RPM=1900 *(13.00/robot.batteryVoltage.getVoltage());
         robot.vision.Update(20);
         ROBOT_X = follower.getPose().getX();
         ROBOT_Y = follower.getPose().getY();
@@ -231,6 +289,8 @@ public class BlueFarHuman extends OpMode {
         telemetry.addData("shooterRPM", SHOOTER_RPM);
         telemetry.addData("angle", ANGLE_POSITION);
         telemetry.addData("turret angle", ANGLE);
+        telemetry.addData("limelight offset" , robot.vision.Offset());
+        telemetry.addData("aprilTag" , robot.vision.AprilTag());
 
         telemetry.update();
     }
@@ -250,6 +310,8 @@ public class BlueFarHuman extends OpMode {
         robot.limelight.setPollRateHz(100);
         robot.limelight.pipelineSwitch(1);
         robot.limelight.start();
+        ANGLE_POSITION = .75;
+
 
     }
 
@@ -257,6 +319,7 @@ public class BlueFarHuman extends OpMode {
      * This method is called continuously after Init while waiting for "play".
      **/
     public void init_loop() {
+        ANGLE_POSITION = .75;
     }
 
     /**
@@ -265,6 +328,7 @@ public class BlueFarHuman extends OpMode {
      **/
     public void start() {
         opmodeTimer.resetTimer();
+        ANGLE_POSITION = .75;
         setPathState(0);
     }
 
@@ -272,7 +336,7 @@ public class BlueFarHuman extends OpMode {
      * We do not use this because everything should automatically disable
      **/
     public void stop() {
-        ROBOT_X=36;
+        ROBOT_X=108;
         ROBOT_Y=12;
         HEADING=0;
         START_HEADING=0;

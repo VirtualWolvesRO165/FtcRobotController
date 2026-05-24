@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robot.Constants.ANGLE_POSITION;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_CLOSE;
 import static org.firstinspires.ftc.teamcode.robot.Constants.IS_IN_FAR;
 import static org.firstinspires.ftc.teamcode.robot.Constants.OFFSET_TURRET;
+import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_RADIUS;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_X;
 import static org.firstinspires.ftc.teamcode.robot.Constants.ROBOT_Y;
 import static org.firstinspires.ftc.teamcode.robot.Constants.SHOOTER_RPM;
@@ -39,8 +40,8 @@ public class Turret extends SubsystemBase {
     public static ShooterState shooterState = ShooterState.STOP;
     public static ShooterAngleState shooterAngleState = ShooterAngleState.STOP;
 
-    public PIDController turretPID = new PIDController(0.0035, 0.0, 0.0);
-    public static double kp = 0.0045, ki = 0.0, kd = 0.0, kf = 0.0;
+    public PIDController turretPID = new PIDController(0.0025, 0.0, 0.0);
+    public static double kp = 0.0025, ki = 0.0, kd = 0.0, kf = 0.0;
 
 
 
@@ -101,38 +102,30 @@ public class Turret extends SubsystemBase {
         shooterState = ShooterState.STOP;
     }
     public void AutoAim(double targetX, double targetY, double heading) {
-        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) - ADDITIONAL_OFFSET_TURRET + OFFSET_TURRET +(START_HEADING-heading);
-        if(angle>90 && angle<270)
-            angle = 90;
-        else{
-            if(angle<360 && angle>270)
-                angle =-(360-angle);
-        }
+        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) - ADDITIONAL_OFFSET_TURRET +(START_HEADING-heading);
         ANGLE=angle;
+        if(angle>180)
+            angle=angle-360;
+        if(angle>90)
+            angle = 90;
+        if(angle<-90)
+            angle=-90;
+        angle+=OFFSET_TURRET;
         int shooterPos = robot.shooterRotation.getCurrentPosition();
         turretPID.setPID(kp, ki, kd);
         double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
-
         robot.shooterRotation.setPower(pid + kf);
     }
     public int CalculateTarget(double angle) {
         return (int) (TURRET_ENCOUDER_TICKS * angle / 90);
     }
 
-//    public void AutoAutoAim(double targetX, double targetY, double heading , int auto) {
-//        double angle = Math.toDegrees(Math.atan2(targetY - ROBOT_Y, targetX - ROBOT_X)) + OFFSET_TURRET -ADDITIONAL_OFFSET_TURRET+ (START_HEADING - heading);
-//        if(angle>=90 && angle<270)
-//            angle = 90;
-//        else{
-//            if(angle<=360 && angle>=270)
-//                angle =-(360-angle);
-//        }
-//        angle += auto;
-//        int shooterPos = robot.shooterRotation.getCurrentPosition();
-//        turretPID.setPID(kp, ki, kd);
-//        double pid = turretPID.calculate(shooterPos, CalculateTarget(angle));
-//        robot.shooterRotation.setPower(pid + kf);
-//    }
+    public void PIDTurret(int target){
+        int shooterPos = robot.shooterRotation.getCurrentPosition();
+        turretPID.setPID(kp, ki, kd);
+        double pid = turretPID.calculate(shooterPos, target);
+        robot.shooterRotation.setPower(pid + kf);
+    }
 
 
     public void UpdateTurret(int target) {
@@ -143,11 +136,22 @@ public class Turret extends SubsystemBase {
     }
 
     public double FlywheelSpeed(double distance){
-        return  3.59448*distance+1098.96682;
+        double x = 3.10915*distance+961.2916;
+        if(x>1700 && !IS_IN_FAR)
+            return 1700;
+        return  x;
     }
 
     public double shooterAngle(double distance){
-        return 5.26938*Math.pow(10,-9)*Math.pow(distance,4)+0.00000350072*Math.pow(distance,3)-0.000833057*Math.pow(distance,2)+0.0901116*distance-3.53654;
+        return -0.000004611*Math.pow(distance,2)+0.0052054*distance-0.715644+0.1;
     }
+
+//    public double FlywheelSpeed(double distance){
+//        return  3.59448*distance+1098.96682;
+//    }
+//
+//    public double shooterAngle(double distance){
+//        return 5.26938*Math.pow(10,-9)*Math.pow(distance,4)+0.00000350072*Math.pow(distance,3)-0.000833057*Math.pow(distance,2)+0.0901116*distance-3.53654;
+//    }
 
 }
